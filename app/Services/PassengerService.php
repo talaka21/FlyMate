@@ -1,0 +1,92 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Flight;
+use App\Http\Resources\FlightResource;
+use App\Models\Booking;
+use Illuminate\Support\Facades\Hash;
+use Exception;
+
+class PassengerService
+{
+    /**
+     * تحديث بيانات الملف الشخصي
+     */
+    public function updateProfile($user, array $data)
+    {
+        $user->update($data);
+        return $user;
+    }
+
+    /**
+     * تغيير كلمة المرور مع التحقق من القديمة
+     */
+    public function changePassword($user, array $data)
+    {
+        if (!Hash::check($data['current_password'], $user->password)) {
+            throw new Exception(__('passenger.wrong_password'));
+        }
+
+        $user->update([
+            'password' => Hash::make($data['new_password'])
+        ]);
+
+        return true;
+    }
+
+    /**
+     * حذف الحساب (تغيير الحالة لـ banned)
+     */
+    public function deleteAccount($user, array $data)
+    {
+        if (!Hash::check($data['password'], $user->password)) {
+            throw new Exception(__('passenger.wrong_password'));
+        }
+
+        $user->update(['status' => 'banned']);
+        $user->tokens()->delete();
+
+        return true;
+    }
+
+    /**
+     * البحث عن الرحلات بناءً على المعايير
+     */
+    public function searchFlights(array $data)
+    {
+    $flights = Flight::with(['airline', 'originAirport', 'destinationAirport', 'prices', 'seats'])
+            ->whereHas('originAirport', fn($q) =>
+                $q->where('iata_code', strtoupper($data['origin']))
+                  ->orWhere('city', 'like', '%' . $data['origin'] . '%')
+            )
+            ->whereHas('destinationAirport', fn($q) =>
+                $q->where('iata_code', strtoupper($data['destination']))
+                  ->orWhere('city', 'like', '%' . $data['destination'] . '%')
+            )
+            ->whereDate('departure_at', $data['date'])
+            ->whereIn('status', ['on_time', 'delayed'])
+            ->get();
+
+        if ($flights->isEmpty()) {
+            throw new Exception(__('flights.not_found'));
+        }
+
+        return FlightResource::collection($flights);
+    }
+
+    public function generateBoardingData($bookingId)
+{
+    // جلب الحجز مع بيانات الرحلة والمقعد والمطار
+    $booking = Booking::with(['flight.originAirport', 'flight.destinationAirport', 'seat', 'user'])
+                      ->findOrFail($bookingId);
+
+    // الرابط الذي سيفتحه موظف المطار للتأكد من صحة التذكرة
+    $verificationUrl = "https://flymate.com/verify/" . $booking->boarding_code;
+
+    return [
+        'booking' => $booking,
+        'qr_url'  => $verificationUrl
+    ];
+}
+}
