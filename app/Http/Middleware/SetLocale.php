@@ -10,8 +10,6 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
-        // للـ API: اقرأ من Accept-Language header
-        // للويب: ارجع للـ session أو default
         $locale = $request->header('Accept-Language')
             ?? session('locale', config('app.locale'));
 

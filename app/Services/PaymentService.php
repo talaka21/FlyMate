@@ -21,12 +21,10 @@ class PaymentService
 
         return DB::transaction(function () use ($booking, $data, $user) {
 
-            // 1. اتصلي بـ Stripe
             Stripe::setApiKey(config('services.stripe.secret'));
 
-            // 2. إنشاء PaymentIntent
             $intent = PaymentIntent::create([
-                'amount'   => $booking->total_price * 100, // Stripe بيحسب بالسنتات
+                 'amount'   => $booking->total_price * 100,
                 'currency' => 'usd',
                 'metadata' => [
                     'booking_id' => $booking->id,
@@ -34,14 +32,13 @@ class PaymentService
                 ],
             ]);
 
-            // 3. احفظي الدفع
             $payment = Payment::create([
                 'booking_id'     => $booking->id,
                 'user_id'        => $user->id,
                 'amount'         => $booking->total_price,
                 'payment_method' => $data['payment_method'],
                 'status'         => 'success',
-                'transaction_id' => $intent->id, // TXN حقيقي من Stripe
+                'transaction_id' => $intent->id,
             ]);
 
             // 4. حدثي الحجز
@@ -49,14 +46,13 @@ class PaymentService
                 'status' => Booking::STATUS_CONFIRMED,
             ]);
 
-            // 5. أرسلي إيميل التأكيد
             Mail::to($user->email)->send(new PaymentConfirmationMail($booking));
 
             return [
                 'booking'        => $booking,
                 'payment'        => $payment,
                 'reference' => $booking->boarding_code,
-                'client_secret'  => $intent->client_secret, // للموبايل
+                'client_secret'  => $intent->client_secret,
             ];
         });
     }

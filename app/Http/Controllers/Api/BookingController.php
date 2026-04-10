@@ -7,7 +7,7 @@ use App\Http\Requests\RescheduleBookingRequest;
 use App\Http\Requests\StoreBookingRequest;
 use App\Http\Requests\UpgradeBookingRequest;
 use App\Services\BookingService;
-use App\Http\Resources\BookingResource; // إضافة الريسورس
+use App\Http\Resources\BookingResource;
 use Illuminate\Http\Request;
 use Exception;
 use App\Traits\ApiResponse;
@@ -53,7 +53,6 @@ class BookingController extends Controller
     public function store(StoreBookingRequest $request)
     {
         try {
-            // السيرفس الآن تعيد مصفوفة من الحجوزات المنشأة
             $bookings = $this->bookingService->createBooking($request->validated(), $request->user());
 
             // نستخدم collection لعرض قائمة الحجوزات التي تمت بنجاح
@@ -117,7 +116,6 @@ class BookingController extends Controller
         try {
             $booking = $request->user()->bookings()->with(['flight', 'seat'])->findOrFail($id);
 
-            // استدعاء خدمة الإرسال (التي تولد الـ QR وتصمم الإيميل)
             $this->bookingService->sendBoardingPassEmail($booking);
 
             return $this->success(

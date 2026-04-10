@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    // جلب كل الإشعارات
     public function index(Request $request)
     {
         $notifications = Notification::where('user_id', $request->user()->id)
@@ -17,7 +16,6 @@ class NotificationController extends Controller
         return response()->json($notifications);
     }
 
-    // تعليم كقريت
     public function markAsRead($id)
     {
         Notification::where('id', $id)

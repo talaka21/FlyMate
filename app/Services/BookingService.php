@@ -30,7 +30,6 @@ class BookingService
     public function createBooking(array $data, $user)
     {
         return \Illuminate\Support\Facades\DB::transaction(function () use ($data, $user) {
-            // 1. جلب السعر بناءً على الرحلة والدرجة (استخدمت دالتك الموجودة)
             $priceInfo = $this->getFlightPrice($data['flight_id'], $data['seat_class']);
 
             if (!$priceInfo) {
@@ -38,11 +37,9 @@ class BookingService
             }
 
             $createdBookings = [];
-            // نعتمد على مصفوفة المقاعد التي سيرسلها عامر
             $seats = $data['seats'] ?? [$data['seat_id']];
 
             foreach ($seats as $seatId) {
-                // 2. إنشاء حجز منفصل لكل مقعد (تذكرة لكل مسافر)
                 $booking = Booking::create([
                     'reference'       => 'FM-' . strtoupper(\Illuminate\Support\Str::random(8)),
                     'user_id'         => $user->id,
@@ -66,8 +63,6 @@ class BookingService
                 sleep(2);
                 $createdBookings[] = $booking;
             }
-
-            // نرجع كل الحجوزات لعامر
             return $createdBookings;
         });
     }
@@ -140,14 +135,12 @@ class BookingService
     }
     public function sendBoardingPassEmail($booking)
     {
-        // توليد الـ QR لاستخدامه في الإيميل
         $qrCode = 'data:image/svg+xml;base64,' . base64_encode(
             \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
                 ->size(200)
                 ->generate("https://flymate.com/verify-boarding/" . $booking->boarding_code)
         );
 
-        // إرسال الإيميل
         \Illuminate\Support\Facades\Mail::to($booking->user->email)
             ->send(new \App\Mail\BoardingPassMail($booking, $qrCode));
 

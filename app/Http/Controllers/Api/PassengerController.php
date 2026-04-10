@@ -69,7 +69,6 @@ class PassengerController extends Controller
 {
     try {
         $data = $this->passengerService->generateBoardingData($id);
-        // نستخدم ريسورس خاص بالبوردينج
         return $this->success(new BookingResource($data['booking']));
     } catch (Exception $e) {
         return $this->error("Ticket not found", 404);

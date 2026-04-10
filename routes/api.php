@@ -4,6 +4,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -86,3 +87,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 Route::get('bookings/{id}/boarding-pass', [BookingController::class, 'generateBoardingPass']);
     });
+
+    Route::middleware('auth:sanctum')->post('/chat', [ChatController::class, 'send']);

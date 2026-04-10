@@ -20,8 +20,6 @@ class ResetPasswordNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        // Deep Link للـ Mobile App
-        // ⚠️ اتفق مع فريق الموبايل على اسم الـ scheme (flymate://)
         $deepLink = 'flymate://reset-password?token=' . $this->token . '&email=' . urlencode($notifiable->email);
 
         return (new MailMessage)
