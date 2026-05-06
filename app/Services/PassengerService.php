@@ -53,27 +53,25 @@ class PassengerService
     /**
      * البحث عن الرحلات بناءً على المعايير
      */
-    public function searchFlights(array $data)
-    {
-    $flights = Flight::with(['airline', 'originAirport', 'destinationAirport', 'prices', 'seats'])
-            ->whereHas('originAirport', fn($q) =>
-                $q->where('iata_code', strtoupper($data['origin']))
-                  ->orWhere('city', 'like', '%' . $data['origin'] . '%')
-            )
-            ->whereHas('destinationAirport', fn($q) =>
-                $q->where('iata_code', strtoupper($data['destination']))
-                  ->orWhere('city', 'like', '%' . $data['destination'] . '%')
-            )
-            ->whereDate('departure_at', $data['date'])
-            ->whereIn('status', ['on_time', 'delayed'])
-            ->get();
+  public function searchFlights(array $data)
+{
+    $allowedCities = ['Damascus', 'Latakia', 'Deir ez-Zor', 'Aleppo'];
 
-        if ($flights->isEmpty()) {
-            throw new Exception(__('flights.not_found'));
-        }
+    $query = Flight::with(['airline', 'originAirport', 'destinationAirport', 'prices', 'seats'])
+        ->whereHas('originAirport', fn($q) =>
+            $q->whereIn('city', $allowedCities)
+        )
+        ->whereDate('departure_at', $data['date'])
+        ->whereIn('status', ['on_time', 'delayed']);
 
-        return FlightResource::collection($flights);
+    $flights = $query->get();
+
+    if ($flights->isEmpty()) {
+        throw new Exception(__('flights.not_found'));
     }
+
+    return FlightResource::collection($flights);
+}
 
     public function generateBoardingData($bookingId)
 {

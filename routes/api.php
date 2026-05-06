@@ -3,89 +3,77 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Api\BookingController;
-use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\AirlineController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Api\PassengerController;
+use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
-// ─── Public Routes ───
+// ─── Public Routes ───────────────────────────────────────
 Route::post('/register/passenger', [AuthController::class, 'registerPassenger']);
 Route::post('/register/manager',   [AuthController::class, 'registerManager']);
 Route::post('/login',              [AuthController::class, 'login']);
 Route::post('/login/mfa',          [AuthController::class, 'verifyMfa']);
-Route::get('/flights/search', [App\Http\Controllers\Api\PassengerController::class, 'searchFlights']);
-// ─── Protected Routes ───
+Route::post('/forgot-password',    [ForgotPasswordController::class, 'sendResetLink']);
+Route::post('/reset-password',     [ForgotPasswordController::class, 'resetPassword']);
+Route::get('/flights/search',      [PassengerController::class, 'searchFlights']);
+Route::get('/weather/{city}', [WeatherController::class, 'show']);
 
+// ─── Airlines  ───
+Route::get('/airlines',            [AirlineController::class, 'index']);
+Route::get('/airlines/{airline}',  [AirlineController::class, 'show']);
+// ─── Protected Routes ─────────────────────────────────────
 Route::middleware('auth:sanctum')->group(function () {
 
+    // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me',      [AuthController::class, 'me']);
 
-    // Admin
+    // ─── Admin ───
     Route::middleware('role:admin')->group(function () {
-        Route::get('/admin/managers/pending',        [AdminController::class, 'pendingManagers']);
-        Route::post('/admin/managers/{id}/approve',  [AdminController::class, 'approveManager']);
-        Route::post('/admin/passengers/{id}/ban',    [AdminController::class, 'banPassenger']);
-        Route::post('/admin/passengers/{id}/unban',  [AdminController::class, 'unbanPassenger']);
+        Route::get('/admin/managers/pending',       [AdminController::class, 'pendingManagers']);
+        Route::post('/admin/managers/{id}/approve', [AdminController::class, 'approveManager']);
+        Route::post('/admin/passengers/{id}/ban',   [AdminController::class, 'banPassenger']);
+        Route::post('/admin/passengers/{id}/unban', [AdminController::class, 'unbanPassenger']);
     });
 
-    // Manager + Admin
+    // ─── Manager + Admin ───
     Route::middleware('role:manager,admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return response()->json(['message' => 'Welcome to Dashboard']);
-        });
+        Route::get('/dashboard', fn() => response()->json(['message' => 'Welcome to Dashboard']));
     });
 
-    // Passenger
+    // ─── Passenger ───
     Route::middleware('role:passenger')->group(function () {
-        Route::get('/home', function () {
-            return response()->json(['message' => 'Welcome Passenger']);
-        });
+        Route::get('/home', fn() => response()->json(['message' => 'Welcome Passenger']));
+
+        // Profile
+        Route::get('/profile',           [PassengerController::class, 'profile']);
+        Route::put('/profile',           [PassengerController::class, 'updateProfile']);
+        Route::put('/profile/password',  [PassengerController::class, 'changePassword']);
+        Route::delete('/profile',        [PassengerController::class, 'deleteAccount']);
+
+        // Bookings
+        Route::get('/bookings',                      [BookingController::class, 'index']);
+        Route::post('/bookings',                     [BookingController::class, 'store']);
+        Route::get('/bookings/{id}',                 [BookingController::class, 'show']);
+        Route::post('/bookings/{id}/cancel',         [BookingController::class, 'cancel']);
+        Route::post('/bookings/{id}/reschedule',     [BookingController::class, 'reschedule']);
+        Route::post('/bookings/{id}/upgrade',        [BookingController::class, 'upgrade']);
+        Route::get('/bookings/{id}/boarding-pass',   [BookingController::class, 'generateBoardingPass']);
+
+        // Payment
+        Route::post('/bookings/{id}/pay', [PaymentController::class, 'pay']);
+
+        // Notifications
+        Route::get('/notifications',              [NotificationController::class, 'index']);
+        Route::post('/notifications/{id}/read',   [NotificationController::class, 'markAsRead']);
+
+        // Chat
+        Route::post('/chat', [ChatController::class, 'send']);
     });
 });
 
-Route::post('/forgot-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendResetLink']);
-Route::post('/reset-password', [App\Http\Controllers\Auth\ForgotPasswordController::class, 'resetPassword']);
-
-
-// Passenger Routes
-Route::middleware('auth:sanctum')->group(function () {
-
-    // Profile & Account
-    Route::get('/profile', [App\Http\Controllers\Api\PassengerController::class, 'profile']);
-    Route::put('/profile', [App\Http\Controllers\Api\PassengerController::class, 'updateProfile']);
-    Route::put('/profile/password', [App\Http\Controllers\Api\PassengerController::class, 'changePassword']);
-    Route::delete('/profile', [App\Http\Controllers\Api\PassengerController::class, 'deleteAccount']);
-
-    // Search Flights
-
-
-    // Book Flight
-    Route::post('/bookings', [App\Http\Controllers\Api\BookingController::class, 'store']);
-    Route::get('/bookings', [App\Http\Controllers\Api\BookingController::class, 'index']);
-    Route::get('/bookings/{id}', [App\Http\Controllers\Api\BookingController::class, 'show']);
-
-    // Payment
-    Route::post('/bookings/{id}/pay', [App\Http\Controllers\Api\PaymentController::class, 'pay']);
-
-    // Manage Bookings
-    Route::post('/bookings/{id}/cancel', [App\Http\Controllers\Api\BookingController::class, 'cancel']);
-    Route::post('/bookings/{id}/reschedule', [App\Http\Controllers\Api\BookingController::class, 'reschedule']);
-    Route::post('/bookings/{id}/upgrade', [App\Http\Controllers\Api\BookingController::class, 'upgrade']);
-
-Route::get('/bookings/{id}/boarding-pass', [App\Http\Controllers\Api\PassengerController::class, 'showBoardingPass']);
-    });
-// Route::get('/test-notification', function () {
-//     $user = \App\Models\User::first();
-//     $user->notify(new \App\Notifications\ResetPasswordNotification('test-token-123'));
-
-//     return response()->json(['message' => 'Notification sent!']);
-// });
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
-Route::get('bookings/{id}/boarding-pass', [BookingController::class, 'generateBoardingPass']);
-    });
-
-    Route::middleware('auth:sanctum')->post('/chat', [ChatController::class, 'send']);

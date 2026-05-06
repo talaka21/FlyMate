@@ -16,13 +16,14 @@ class Flight extends Model
         'aircraft_type',
         'total_seats',
         'status',
+        'frequency',
     ];
 
+    protected $casts = [
+        'departure_at' => 'datetime',
+        'arrival_at'   => 'datetime',
+    ];
 
-protected $casts = [
-    'departure_at' => 'datetime',
-    'arrival_at'   => 'datetime',
-];
     public function airline()
     {
         return $this->belongsTo(Airline::class);
@@ -56,5 +57,13 @@ protected $casts = [
     public function schedules()
     {
         return $this->hasMany(Schedule::class);
+    }
+
+    public function getDurationLabelAttribute(): string
+    {
+        $minutes = $this->departure_at->diffInMinutes($this->arrival_at);
+        $h = intdiv($minutes, 60);
+        $m = $minutes % 60;
+        return $m > 0 ? "{$h}h {$m}m" : "{$h}h";
     }
 }

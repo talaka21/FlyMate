@@ -25,7 +25,7 @@ class SearchFlightsRequest extends FormRequest
          return [
         'origin' => 'required|string',
         'destination' => 'required|string',
-        'date' => 'required|date',
+      'date' => 'required', 'date', 'date_format:Y-m-d',
         'passengers' => 'sometimes|integer|min:1',
         'class' => 'sometimes|in:economy,business,first_class',
     ];
