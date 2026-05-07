@@ -53,21 +53,33 @@ class PassengerService
     /**
      * البحث عن الرحلات بناءً على المعايير
      */
-  public function searchFlights(array $data)
+ public function searchFlights(array $data)
 {
     $allowedCities = ['Damascus', 'Latakia', 'Deir ez-Zor', 'Aleppo'];
 
     $query = Flight::with(['airline', 'originAirport', 'destinationAirport', 'prices', 'seats'])
-        ->whereHas('originAirport', fn($q) =>
-            $q->whereIn('city', $allowedCities)
-        )
+        // 1. الفلترة بالتاريخ (أساسية بناءً على طلب شريكك)
         ->whereDate('departure_at', $data['date'])
+
+        // 2. فلترة المصدر (فقط إذا تم إرسال origin في الطلب)
+        ->when(isset($data['origin']), function ($q) use ($data) {
+            $q->whereHas('originAirport', fn($sub) => $sub->where('city', $data['origin']));
+        })
+
+        // 3. فلترة الوجهة (فقط إذا تم إرسال destination في الطلب)
+        ->when(isset($data['destination']), function ($q) use ($data) {
+            $q->whereHas('destinationAirport', fn($sub) => $sub->where('city', $data['destination']));
+        })
+
+        // 4. حماية إضافية: التأكد أن الرحلة ضمن المدن المسموحة (اختياري حسب منطق عملك)
+        ->whereHas('originAirport', fn($q) => $q->whereIn('city', $allowedCities))
+
         ->whereIn('status', ['on_time', 'delayed']);
 
     $flights = $query->get();
 
     if ($flights->isEmpty()) {
-        throw new Exception(__('flights.not_found'));
+        throw new \Exception(__('flights.not_found'));
     }
 
     return FlightResource::collection($flights);

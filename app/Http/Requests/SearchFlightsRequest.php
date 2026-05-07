@@ -21,13 +21,16 @@ class SearchFlightsRequest extends FormRequest
      * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
-         return [
-        'origin' => 'required|string',
-        'destination' => 'required|string',
-      'date' => 'required', 'date', 'date_format:Y-m-d',
+   public function rules(): array
+{
+    return [
+        'date' => ['required', 'date', 'date_format:Y-m-d'],
+
+        'origin' => 'sometimes|nullable|string',
+        'destination' => 'sometimes|nullable|string',
+
         'passengers' => 'sometimes|integer|min:1',
         'class' => 'sometimes|in:economy,business,first_class',
     ];
-    }
+}
 }
