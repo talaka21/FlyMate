@@ -10,7 +10,7 @@ class BookingRepositoryImpl implements BookingRepository {
   final BookingRemoteDataSource _remote;
 
   BookingRepositoryImpl({required BookingRemoteDataSource remote})
-      : _remote = remote;
+    : _remote = remote;
 
   @override
   Future<BookingResponse> createBooking(BookingRequest request) {

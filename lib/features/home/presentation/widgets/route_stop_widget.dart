@@ -5,7 +5,8 @@ class RouteStop extends StatelessWidget {
   final String label;
   final bool isLeft;
 
-  const RouteStop({super.key, 
+  const RouteStop({
+    super.key,
     required this.time,
     required this.label,
     required this.isLeft,

@@ -19,7 +19,9 @@ class TodayFlightsDataSource {
     if (response.data['data'] != null) {
       final List data = response.data['data'];
       return data
-          .map((e) => Flight.fromServerModel(ResultFlightSearchModel.fromJson(e)))
+          .map(
+            (e) => Flight.fromServerModel(ResultFlightSearchModel.fromJson(e)),
+          )
           .toList();
     }
     return [];

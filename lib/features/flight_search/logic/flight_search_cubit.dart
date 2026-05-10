@@ -26,14 +26,16 @@ class FlightsCubit extends Cubit<FlightsState> {
       final results = available
           .asMap()
           .entries
-          .map((e) => FlightResult.fromModel(
-                e.value,
-                e.value.id,
-                req.flightClass,
-                adultCount: req.adults,
-                childCount: req.children,
-                infantCount: req.infants,
-              ))
+          .map(
+            (e) => FlightResult.fromModel(
+              e.value,
+              e.value.id,
+              req.flightClass,
+              adultCount: req.adults,
+              childCount: req.children,
+              infantCount: req.infants,
+            ),
+          )
           .toList();
 
       // 4. توليد قائمة أسعار الأسبوع (مؤقتاً حتى يدعمها السيرفر)

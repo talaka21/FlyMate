@@ -109,7 +109,8 @@ class FlightCardBody extends StatelessWidget {
     final depParts = dep.split(':');
     final arrParts = arr.split(':');
     if (depParts.length != 2 || arrParts.length != 2) return 'Direct';
-    int dur = (int.parse(arrParts[0]) * 60 + int.parse(arrParts[1])) -
+    int dur =
+        (int.parse(arrParts[0]) * 60 + int.parse(arrParts[1])) -
         (int.parse(depParts[0]) * 60 + int.parse(depParts[1]));
     if (dur < 0) dur += 24 * 60;
     return 'Direct · ${dur ~/ 60}h ${dur % 60}m';

@@ -94,7 +94,11 @@ class _CheckInPageState extends State<CheckInPage> {
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -141,7 +145,11 @@ class _CheckInPageState extends State<CheckInPage> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
               boxShadow: const [
-                BoxShadow(color: Colors.black12, blurRadius: 12, offset: Offset(0, 4)),
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 12,
+                  offset: Offset(0, 4),
+                ),
               ],
             ),
             child: Column(
@@ -244,7 +252,10 @@ class _CheckInPageState extends State<CheckInPage> {
               hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
               prefixIcon: Icon(icon, color: _primary, size: 20),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 13, horizontal: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 13,
+                horizontal: 12,
+              ),
             ),
           ),
         ),
@@ -268,7 +279,11 @@ class _CheckInPageState extends State<CheckInPage> {
           Expanded(
             child: Text(
               'Online check-in is available from 24 hours up to 1 hour before departure.',
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade700, height: 1.5),
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey.shade700,
+                height: 1.5,
+              ),
             ),
           ),
         ],
@@ -285,7 +300,11 @@ class _CheckInPageState extends State<CheckInPage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               boxShadow: const [
-                BoxShadow(color: Colors.black12, blurRadius: 16, offset: Offset(0, 6)),
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 16,
+                  offset: Offset(0, 6),
+                ),
               ],
             ),
             child: ClipRRect(
@@ -318,14 +337,20 @@ class _CheckInPageState extends State<CheckInPage> {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Text(
                                 'Economy',
-                                style: TextStyle(color: Colors.white, fontSize: 12),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
                           ],
@@ -338,7 +363,11 @@ class _CheckInPageState extends State<CheckInPage> {
                             _buildAirportCol('DAM', 'Damascus', 'SYR'),
                             Column(
                               children: [
-                                const Icon(Icons.flight, color: Colors.white, size: 22),
+                                const Icon(
+                                  Icons.flight,
+                                  color: Colors.white,
+                                  size: 22,
+                                ),
                                 const SizedBox(height: 4),
                                 Text(
                                   '3h 40m',
@@ -371,7 +400,9 @@ class _CheckInPageState extends State<CheckInPage> {
                                   child: Container(
                                     height: 1,
                                     color: Colors.grey.shade300,
-                                    margin: const EdgeInsets.symmetric(horizontal: 2),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 2,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -463,7 +494,9 @@ class _CheckInPageState extends State<CheckInPage> {
                     foregroundColor: _primary,
                     side: const BorderSide(color: _primary),
                     padding: const EdgeInsets.symmetric(vertical: 13),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -471,13 +504,22 @@ class _CheckInPageState extends State<CheckInPage> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {},
-                  icon: const Icon(Icons.share_outlined, size: 18, color: Colors.white),
-                  label: const Text('Share', style: TextStyle(color: Colors.white)),
+                  icon: const Icon(
+                    Icons.share_outlined,
+                    size: 18,
+                    color: Colors.white,
+                  ),
+                  label: const Text(
+                    'Share',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _primary,
                     padding: const EdgeInsets.symmetric(vertical: 13),
                     elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -486,7 +528,10 @@ class _CheckInPageState extends State<CheckInPage> {
           const SizedBox(height: 12),
           TextButton(
             onPressed: () => setState(() => _checked = false),
-            child: const Text('Check in another flight', style: TextStyle(color: _primary)),
+            child: const Text(
+              'Check in another flight',
+              style: TextStyle(color: _primary),
+            ),
           ),
         ],
       ),
@@ -507,11 +552,18 @@ class _CheckInPageState extends State<CheckInPage> {
         ),
         Text(
           city,
-          style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         Text(
           country,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 11),
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.6),
+            fontSize: 11,
+          ),
         ),
       ],
     );

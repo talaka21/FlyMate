@@ -18,18 +18,69 @@ class _ChangeSeatPageState extends State<ChangeSeatPage> {
 
   // Occupied seats (demo)
   final _occupied = const {
-    '1A', '1B', '1C', '1D', '1E', '1F',
-    '2A', '2B', '2C', '2D', '2E', '2F',
-    '3A', '3B', '3C', '3D', '3E', '3F',
-    '5B', '5C', '5E', '7A', '7F',
-    '8B', '8D', '9C', '9E', '10A',
-    '12C', '12D', '13B', '13E', '14A', '14F',
-    '15C', '16B', '16D', '17A', '17F',
-    '18C', '18E', '19B', '19D',
-    '20A', '20C', '20F', '21B', '21E',
-    '22D', '23A', '23C', '24B', '24E',
-    '25F', '26A', '26D', '27C', '27E',
-    '28B', '28F', '29A', '29D', '30C',
+    '1A',
+    '1B',
+    '1C',
+    '1D',
+    '1E',
+    '1F',
+    '2A',
+    '2B',
+    '2C',
+    '2D',
+    '2E',
+    '2F',
+    '3A',
+    '3B',
+    '3C',
+    '3D',
+    '3E',
+    '3F',
+    '5B',
+    '5C',
+    '5E',
+    '7A',
+    '7F',
+    '8B',
+    '8D',
+    '9C',
+    '9E',
+    '10A',
+    '12C',
+    '12D',
+    '13B',
+    '13E',
+    '14A',
+    '14F',
+    '15C',
+    '16B',
+    '16D',
+    '17A',
+    '17F',
+    '18C',
+    '18E',
+    '19B',
+    '19D',
+    '20A',
+    '20C',
+    '20F',
+    '21B',
+    '21E',
+    '22D',
+    '23A',
+    '23C',
+    '24B',
+    '24E',
+    '25F',
+    '26A',
+    '26D',
+    '27C',
+    '27E',
+    '28B',
+    '28F',
+    '29A',
+    '29D',
+    '30C',
   };
 
   // Extra legroom rows
@@ -72,7 +123,9 @@ class _ChangeSeatPageState extends State<ChangeSeatPage> {
             style: ElevatedButton.styleFrom(
               backgroundColor: _primary,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             child: const Text('Confirm', style: TextStyle(color: Colors.white)),
           ),
@@ -137,7 +190,11 @@ class _ChangeSeatPageState extends State<ChangeSeatPage> {
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -152,7 +209,10 @@ class _ChangeSeatPageState extends State<ChangeSeatPage> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
@@ -208,10 +268,22 @@ class _ChangeSeatPageState extends State<ChangeSeatPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _legendItem(const Color(0xFFEEF4FF), const Color(0xFF1D5BBF), 'Available'),
-          _legendItem(const Color(0xFFE8F5E9), const Color(0xFF22C55E), 'Selected'),
+          _legendItem(
+            const Color(0xFFEEF4FF),
+            const Color(0xFF1D5BBF),
+            'Available',
+          ),
+          _legendItem(
+            const Color(0xFFE8F5E9),
+            const Color(0xFF22C55E),
+            'Selected',
+          ),
           _legendItem(Colors.grey.shade200, Colors.grey.shade400, 'Occupied'),
-          _legendItem(const Color(0xFFFFF8E1), const Color(0xFFF59E0B), 'Extra Legroom'),
+          _legendItem(
+            const Color(0xFFFFF8E1),
+            const Color(0xFFF59E0B),
+            'Extra Legroom',
+          ),
         ],
       ),
     );
@@ -295,7 +367,9 @@ class _ChangeSeatPageState extends State<ChangeSeatPage> {
       decoration: BoxDecoration(
         color: const Color(0xFFFFF8E1),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
+        border: Border.all(
+          color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+        ),
       ),
       child: const Center(
         child: Text(
@@ -340,7 +414,8 @@ class _ChangeSeatPageState extends State<ChangeSeatPage> {
               isExtraLegroom: isExtraLegroom,
               onTap: isOccupied
                   ? null
-                  : () => setState(() => _selected = isSelected ? null : seatId),
+                  : () =>
+                        setState(() => _selected = isSelected ? null : seatId),
             );
           }),
         ],
@@ -354,7 +429,11 @@ class _ChangeSeatPageState extends State<ChangeSeatPage> {
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -3)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, -3),
+          ),
         ],
       ),
       child: Row(
@@ -470,8 +549,8 @@ class _SeatButton extends StatelessWidget {
         child: isSelected
             ? const Icon(Icons.check, color: Colors.white, size: 14)
             : isOccupied
-                ? const Icon(Icons.close, color: Colors.grey, size: 12)
-                : null,
+            ? const Icon(Icons.close, color: Colors.grey, size: 12)
+            : null,
       ),
     );
   }

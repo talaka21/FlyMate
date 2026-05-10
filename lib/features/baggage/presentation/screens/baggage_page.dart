@@ -143,7 +143,11 @@ class _BaggagePageState extends State<BaggagePage> {
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -227,7 +231,11 @@ class _BaggagePageState extends State<BaggagePage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 12, offset: Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -306,10 +314,7 @@ class _BaggagePageState extends State<BaggagePage> {
         Expanded(
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
           ),
         ),
         Text(
@@ -331,7 +336,11 @@ class _BaggagePageState extends State<BaggagePage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 12, offset: Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -372,9 +381,7 @@ class _BaggagePageState extends State<BaggagePage> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: isFree
-                ? const Color(0xFFE8F5E9)
-                : const Color(0xFFFFF3E0),
+            color: isFree ? const Color(0xFFE8F5E9) : const Color(0xFFFFF3E0),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -382,9 +389,7 @@ class _BaggagePageState extends State<BaggagePage> {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: isFree
-                  ? const Color(0xFF22C55E)
-                  : const Color(0xFFF59E0B),
+              color: isFree ? const Color(0xFF22C55E) : const Color(0xFFF59E0B),
             ),
           ),
         ),

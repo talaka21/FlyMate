@@ -8,18 +8,20 @@ class BookingCubit extends Cubit<BookingState> {
   final BookingRepository _repository;
 
   BookingCubit({required BookingRepository repository})
-      : _repository = repository,
-        super(BookingInitial());
+    : _repository = repository,
+      super(BookingInitial());
 
   Future<void> createBooking(BookingRequest request) async {
     emit(BookingLoading());
     try {
       final response = await _repository.createBooking(request);
       if (response.data.isNotEmpty) {
-        emit(BookingSuccess(
-          bookings: response.data,
-          passengers: request.passengers,
-        ));
+        emit(
+          BookingSuccess(
+            bookings: response.data,
+            passengers: request.passengers,
+          ),
+        );
       } else {
         emit(BookingError(message: 'No booking data returned from server.'));
       }
@@ -43,13 +45,15 @@ class BookingCubit extends Cubit<BookingState> {
       if (data['errors'] is Map) {
         final errors = data['errors'] as Map<String, dynamic>;
         if (errors.isNotEmpty) {
-          final messages = errors.entries.map((entry) {
-            final list = entry.value;
-            final msg = list is List && list.isNotEmpty
-                ? list.first.toString()
-                : entry.value.toString();
-            return msg;
-          }).join('\n');
+          final messages = errors.entries
+              .map((entry) {
+                final list = entry.value;
+                final msg = list is List && list.isNotEmpty
+                    ? list.first.toString()
+                    : entry.value.toString();
+                return msg;
+              })
+              .join('\n');
           return messages;
         }
       }
@@ -65,7 +69,8 @@ class BookingCubit extends Cubit<BookingState> {
         return 'Cannot reach server. Please check your connection.';
       case DioExceptionType.badResponse:
         final code = e.response?.statusCode;
-        if (code != null && code >= 500) return 'Server error. Please try again later.';
+        if (code != null && code >= 500)
+          return 'Server error. Please try again later.';
         return 'Request failed (HTTP $code).';
       default:
         return 'Something went wrong. Please try again.';

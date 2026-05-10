@@ -7,7 +7,7 @@ class PassengerInfo {
   final PassengerType type;
   final String name;
   final String passportNumber; // empty string for infants
-  final String email;          // only lead adult fills this
+  final String email; // only lead adult fills this
 
   const PassengerInfo({
     required this.type,

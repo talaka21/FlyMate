@@ -98,25 +98,40 @@ class _TicketsView extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
                 const Text(
                   'My Tickets',
-                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
           if (!isTab) const SizedBox(height: 20),
           const Text(
             'My Bookings',
-            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             'All your confirmed flight reservations',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13),
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 13,
+            ),
           ),
         ],
       ),
@@ -149,12 +164,20 @@ class _TicketsView extends StatelessWidget {
               color: const Color(0xFFEEF4FF),
               borderRadius: BorderRadius.circular(24),
             ),
-            child: const Icon(Icons.airplane_ticket_outlined, size: 44, color: _primary),
+            child: const Icon(
+              Icons.airplane_ticket_outlined,
+              size: 44,
+              color: _primary,
+            ),
           ),
           const SizedBox(height: 20),
           const Text(
             'No bookings yet',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: _dark),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: _dark,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -168,10 +191,18 @@ class _TicketsView extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: _primary,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 13),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 13,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              child: const Text('Search Flights', style: TextStyle(color: Colors.white, fontSize: 14)),
+              child: const Text(
+                'Search Flights',
+                style: TextStyle(color: Colors.white, fontSize: 14),
+              ),
             ),
         ],
       ),
@@ -190,18 +221,31 @@ class _TicketsView extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade600, height: 1.5),
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade600,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () => context.read<MyBookingsCubit>().load(),
-              icon: const Icon(Icons.refresh_rounded, size: 18, color: Colors.white),
+              icon: const Icon(
+                Icons.refresh_rounded,
+                size: 18,
+                color: Colors.white,
+              ),
               label: const Text('Retry', style: TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _primary,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ],
@@ -223,7 +267,9 @@ class _TicketCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isConfirmed = booking.status.toLowerCase() == 'confirmed';
-    final statusColor = isConfirmed ? const Color(0xFF22C55E) : Colors.grey.shade400;
+    final statusColor = isConfirmed
+        ? const Color(0xFF22C55E)
+        : Colors.grey.shade400;
     final statusLabel = isConfirmed ? 'Confirmed' : booking.status;
 
     final departure = _parseDateTime(booking.departureAt);
@@ -233,7 +279,11 @@ class _TicketCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 12, offset: Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       child: ClipRRect(
@@ -264,11 +314,16 @@ class _TicketCard extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: statusColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: statusColor.withValues(alpha: 0.4)),
+                          border: Border.all(
+                            color: statusColor.withValues(alpha: 0.4),
+                          ),
                         ),
                         child: Text(
                           statusLabel,
@@ -288,7 +343,12 @@ class _TicketCard extends StatelessWidget {
                     children: [
                       _routeCol(booking.fromCode, booking.from, departure.time),
                       const Icon(Icons.flight, color: Colors.white, size: 22),
-                      _routeCol(booking.toCode, booking.to, arrival.time, right: true),
+                      _routeCol(
+                        booking.toCode,
+                        booking.to,
+                        arrival.time,
+                        right: true,
+                      ),
                     ],
                   ),
                 ],
@@ -335,7 +395,10 @@ class _TicketCard extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFF5F8FF),
                           borderRadius: BorderRadius.circular(8),
@@ -343,7 +406,11 @@ class _TicketCard extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.bookmark_outlined, size: 13, color: _primary),
+                            const Icon(
+                              Icons.bookmark_outlined,
+                              size: 13,
+                              color: _primary,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               booking.boardingCode,
@@ -363,7 +430,10 @@ class _TicketCard extends StatelessWidget {
                           onPressed: () => _showBoardingPass(context),
                           style: TextButton.styleFrom(
                             foregroundColor: _primary,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                               side: const BorderSide(color: _primary),
@@ -371,7 +441,10 @@ class _TicketCard extends StatelessWidget {
                           ),
                           child: const Text(
                             'View Pass',
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                     ],
@@ -394,23 +467,41 @@ class _TicketCard extends StatelessWidget {
     );
   }
 
-  Widget _routeCol(String code, String city, String time, {bool right = false}) {
+  Widget _routeCol(
+    String code,
+    String city,
+    String time, {
+    bool right = false,
+  }) {
     return Column(
-      crossAxisAlignment: right ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: right
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Text(
           code,
-          style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         Text(
           city,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 11),
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.7),
+            fontSize: 11,
+          ),
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 2),
         Text(
           time,
-          style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );
@@ -447,7 +538,11 @@ class _TicketCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             value.isEmpty ? '—' : value,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: _dark),
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: _dark,
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -459,8 +554,18 @@ class _TicketCard extends StatelessWidget {
     try {
       final dt = DateTime.parse(raw);
       final months = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ];
       final date = '${dt.day} ${months[dt.month - 1]} ${dt.year}';
       final time =
@@ -641,15 +746,24 @@ class _BoardingPassSheet extends StatelessWidget {
 
   Widget _bpCol(String code, String city, {bool right = false}) {
     return Column(
-      crossAxisAlignment: right ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: right
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Text(
           code,
-          style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.w800),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 30,
+            fontWeight: FontWeight.w800,
+          ),
         ),
         Text(
           city,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12),
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.7),
+            fontSize: 12,
+          ),
         ),
       ],
     );
@@ -672,7 +786,11 @@ class _BoardingPassSheet extends StatelessWidget {
           const SizedBox(height: 3),
           Text(
             value.isEmpty ? '—' : value,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: _dark),
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: _dark,
+            ),
             overflow: TextOverflow.ellipsis,
           ),
         ],

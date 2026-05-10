@@ -61,7 +61,8 @@ class FlightResult {
     final arr =
         '${m.arrivalAt.hour.toString().padLeft(2, '0')}:${m.arrivalAt.minute.toString().padLeft(2, '0')}';
     // Calculate duration from time-of-day only — avoids wrong date from API
-    int durMin = (m.arrivalAt.hour * 60 + m.arrivalAt.minute) -
+    int durMin =
+        (m.arrivalAt.hour * 60 + m.arrivalAt.minute) -
         (m.departureAt.hour * 60 + m.departureAt.minute);
     if (durMin < 0) durMin += 24 * 60; // overnight flight
     final h = durMin ~/ 60;

@@ -68,7 +68,10 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
     setState(() => _loading = true);
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    final query = _flightController.text.trim().toUpperCase().replaceAll(' ', '');
+    final query = _flightController.text.trim().toUpperCase().replaceAll(
+      ' ',
+      '',
+    );
     _result = _demoFlights.firstWhere(
       (f) => f.flightNumber.replaceAll(' ', '') == query,
       orElse: () => _demoFlights.first,
@@ -103,7 +106,8 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
                     children: [
                       _buildSearchBar(),
                       const SizedBox(height: 24),
-                      if (_searched && _result != null) _buildStatusCard(_result!),
+                      if (_searched && _result != null)
+                        _buildStatusCard(_result!),
                       if (!_searched) _buildSuggestions(),
                     ],
                   ),
@@ -143,7 +147,11 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -186,7 +194,11 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 12, offset: Offset(0, 4)),
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 12,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       child: Row(
@@ -215,9 +227,16 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
                     fontWeight: FontWeight.normal,
                     letterSpacing: 0,
                   ),
-                  prefixIcon: const Icon(Icons.flight_rounded, color: _primary, size: 20),
+                  prefixIcon: const Icon(
+                    Icons.flight_rounded,
+                    color: _primary,
+                    size: 20,
+                  ),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 12,
+                  ),
                 ),
               ),
             ),
@@ -262,7 +281,11 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
             boxShadow: const [
-              BoxShadow(color: Colors.black12, blurRadius: 12, offset: Offset(0, 4)),
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 12,
+                offset: Offset(0, 4),
+              ),
             ],
           ),
           child: Column(
@@ -273,12 +296,18 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.1),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(_statusIcon(flight.status), color: statusColor, size: 16),
+                    Icon(
+                      _statusIcon(flight.status),
+                      color: statusColor,
+                      size: 16,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       statusLabel,
@@ -301,7 +330,10 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFEEF4FF),
                             borderRadius: BorderRadius.circular(8),
@@ -342,7 +374,11 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
                         Expanded(
                           child: Column(
                             children: [
-                              const Icon(Icons.flight, color: _primary, size: 20),
+                              const Icon(
+                                Icons.flight,
+                                color: _primary,
+                                size: 20,
+                              ),
                               const SizedBox(height: 6),
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
@@ -372,13 +408,24 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
                     // Details row
                     Row(
                       children: [
-                        _buildInfoTile(Icons.meeting_room_outlined, 'Gate', flight.gate),
-                        _buildInfoTile(Icons.layers_outlined, 'Terminal', flight.terminal),
+                        _buildInfoTile(
+                          Icons.meeting_room_outlined,
+                          'Gate',
+                          flight.gate,
+                        ),
+                        _buildInfoTile(
+                          Icons.layers_outlined,
+                          'Terminal',
+                          flight.terminal,
+                        ),
                         _buildInfoTile(
                           Icons.access_time_rounded,
                           'Departs',
                           flight.status == _FlightStatus.delayed
-                              ? _addDelay(flight.departureTime, flight.delayMinutes ?? 0)
+                              ? _addDelay(
+                                  flight.departureTime,
+                                  flight.delayMinutes ?? 0,
+                                )
                               : flight.departureTime,
                         ),
                       ],
@@ -412,7 +459,9 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
     return SizedBox(
       width: 70,
       child: Column(
-        crossAxisAlignment: isLeft ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+        crossAxisAlignment: isLeft
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.end,
         children: [
           Text(
             code,
@@ -503,7 +552,11 @@ class _FlightStatusPageState extends State<FlightStatusPage> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           boxShadow: const [
-            BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
           ],
         ),
         child: Row(

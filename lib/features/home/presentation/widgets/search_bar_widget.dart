@@ -32,9 +32,7 @@ class SearchBarWidget extends StatelessWidget {
           colorScheme.surfaceContainerHighest.withOpacity(0.5),
         ),
         shape: WidgetStateProperty.all(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
         padding: WidgetStateProperty.all(
           const EdgeInsets.symmetric(horizontal: 16),

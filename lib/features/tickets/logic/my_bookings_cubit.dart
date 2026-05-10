@@ -21,7 +21,8 @@ class MyBookingsCubit extends Cubit<MyBookingsState> {
   }
 
   String _parseDio(DioException e) {
-    if (e.response?.statusCode == 401) return 'Session expired. Please sign in again.';
+    if (e.response?.statusCode == 401)
+      return 'Session expired. Please sign in again.';
     final data = e.response?.data;
     if (data is Map<String, dynamic> && data['message'] is String) {
       return data['message'] as String;

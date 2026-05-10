@@ -57,8 +57,9 @@ class FlightCardFooter extends StatelessWidget {
   }
 
   (String, String) _footerData(Flight f) {
-    final aircraft =
-        f.aircraftType.isNotEmpty ? f.aircraftType : f.flightNumber;
+    final aircraft = f.aircraftType.isNotEmpty
+        ? f.aircraftType
+        : f.flightNumber;
     final timeInfo = switch (f.status) {
       FlightStatus.boarding => 'Boarding now',
       FlightStatus.delayed => 'Delayed · Departs ${f.departureTime}',

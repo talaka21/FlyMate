@@ -67,7 +67,8 @@ class Flight {
   };
 
   factory Flight.fromServerModel(ResultFlightSearchModel m) {
-    int durMin = (m.arrivalAt.hour * 60 + m.arrivalAt.minute) -
+    int durMin =
+        (m.arrivalAt.hour * 60 + m.arrivalAt.minute) -
         (m.departureAt.hour * 60 + m.departureAt.minute);
     if (durMin < 0) durMin += 24 * 60;
     final h = durMin ~/ 60;

@@ -105,9 +105,9 @@ class _HomePageViewState extends State<_HomePageView> {
         index: _navIndex,
         children: [
           _HomeTab(searchController: _searchController),
-          const _PlaceholderTab(icon: Icons.flight_rounded,   label: 'Flights'),
+          const _PlaceholderTab(icon: Icons.flight_rounded, label: 'Flights'),
           const TicketsPage(isTab: true),
-          const _PlaceholderTab(icon: Icons.person_rounded,   label: 'Profile'),
+          const _PlaceholderTab(icon: Icons.person_rounded, label: 'Profile'),
         ],
       ),
       bottomNavigationBar: _BottomNav(
@@ -152,16 +152,24 @@ class _HomeTab extends StatelessWidget {
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
               const SliverToBoxAdapter(child: QuickActions()),
               SliverToBoxAdapter(
-                child: SectionTitle(title: "Airlines at Damascus", onSeeAll: () {}),
+                child: SectionTitle(
+                  title: "Airlines at Damascus",
+                  onSeeAll: () {},
+                ),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 12)),
               SliverToBoxAdapter(child: AirlinesList(airlines: dummyAirlines)),
               const SliverToBoxAdapter(child: SizedBox(height: 24)),
               SliverToBoxAdapter(
-                child: SectionTitle(title: "Popular Destinations", onSeeAll: () {}),
+                child: SectionTitle(
+                  title: "Popular Destinations",
+                  onSeeAll: () {},
+                ),
               ),
               const SliverToBoxAdapter(child: SizedBox(height: 12)),
-              SliverToBoxAdapter(child: DestinationsList(destinations: dummyDestinations)),
+              SliverToBoxAdapter(
+                child: DestinationsList(destinations: dummyDestinations),
+              ),
               const SliverToBoxAdapter(child: SizedBox(height: 28)),
               SliverToBoxAdapter(
                 child: SectionTitle(title: "Today's Flights", onSeeAll: () {}),
@@ -186,17 +194,29 @@ class _HomeTab extends StatelessWidget {
                   if (state is TodayFlightsError) {
                     return SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 24,
+                        ),
                         child: Column(
                           children: [
-                            const Icon(Icons.wifi_off_rounded, size: 40, color: Color(0xFFB0BEC5)),
+                            const Icon(
+                              Icons.wifi_off_rounded,
+                              size: 40,
+                              color: Color(0xFFB0BEC5),
+                            ),
                             const SizedBox(height: 8),
                             Text(
                               'Could not load flights',
-                              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                             ),
                             TextButton(
-                              onPressed: () => context.read<TodayFlightsCubit>().load(),
+                              onPressed: () =>
+                                  context.read<TodayFlightsCubit>().load(),
                               child: const Text('Retry'),
                             ),
                           ],
@@ -204,7 +224,9 @@ class _HomeTab extends StatelessWidget {
                       ),
                     );
                   }
-                  final flights = state is TodayFlightsLoaded ? state.flights : <Flight>[];
+                  final flights = state is TodayFlightsLoaded
+                      ? state.flights
+                      : <Flight>[];
                   if (flights.isEmpty) {
                     return SliverToBoxAdapter(
                       child: Padding(
@@ -212,7 +234,11 @@ class _HomeTab extends StatelessWidget {
                         child: Center(
                           child: Text(
                             'No flights scheduled for today',
-                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
                       ),
@@ -299,10 +325,10 @@ class _BottomNav extends StatelessWidget {
   const _BottomNav({required this.selectedIndex, required this.onTap});
 
   static const _items = [
-    _NavItem(icon: Icons.home_rounded,     label: 'Home'),
-    _NavItem(icon: Icons.flight_rounded,   label: 'Flights'),
+    _NavItem(icon: Icons.home_rounded, label: 'Home'),
+    _NavItem(icon: Icons.flight_rounded, label: 'Flights'),
     _NavItem(icon: Icons.bookmark_rounded, label: 'Bookings'),
-    _NavItem(icon: Icons.person_rounded,   label: 'Profile'),
+    _NavItem(icon: Icons.person_rounded, label: 'Profile'),
   ];
 
   @override

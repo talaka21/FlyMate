@@ -780,10 +780,11 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
         final badge = passenger.type == PassengerType.child
             ? 'CHILD'
             : passenger.type == PassengerType.infant
-                ? 'INFANT'
-                : '';
-        final seatValue =
-            passenger.type == PassengerType.infant ? 'LAP' : booking.seatNumber;
+            ? 'INFANT'
+            : '';
+        final seatValue = passenger.type == PassengerType.infant
+            ? 'LAP'
+            : booking.seatNumber;
         final bcbpData =
             'M1${passenger.name.toUpperCase().replaceAll(' ', '/')} '
             '${booking.boardingCode} '
@@ -807,7 +808,9 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
                     pw.Container(
                       color: pdfColor,
                       padding: const pw.EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                       child: pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
@@ -824,11 +827,12 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
                               if (badge.isNotEmpty) ...[
                                 pw.Container(
                                   padding: const pw.EdgeInsets.symmetric(
-                                      horizontal: 6, vertical: 2),
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
                                   decoration: pw.BoxDecoration(
                                     color: PdfColors.white,
-                                    borderRadius:
-                                        pw.BorderRadius.circular(8),
+                                    borderRadius: pw.BorderRadius.circular(8),
                                   ),
                                   child: pw.Text(
                                     badge,
@@ -844,7 +848,9 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
                               pw.Text(
                                 booking.flightNumber,
                                 style: const pw.TextStyle(
-                                    color: PdfColors.white, fontSize: 12),
+                                  color: PdfColors.white,
+                                  fontSize: 12,
+                                ),
                               ),
                             ],
                           ),
@@ -863,22 +869,26 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
                               pw.Text(
                                 booking.fromCode,
                                 style: pw.TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: pw.FontWeight.bold),
+                                  fontSize: 26,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
                               ),
                               pw.Text(
                                 booking.from,
                                 style: const pw.TextStyle(
-                                    fontSize: 9, color: PdfColors.grey),
+                                  fontSize: 9,
+                                  color: PdfColors.grey,
+                                ),
                               ),
                             ],
                           ),
                           pw.Text(
                             '-------',
                             style: pw.TextStyle(
-                                color: pdfColor,
-                                fontSize: 12,
-                                fontWeight: pw.FontWeight.bold),
+                              color: pdfColor,
+                              fontSize: 12,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
                           ),
                           pw.Column(
                             crossAxisAlignment: pw.CrossAxisAlignment.end,
@@ -886,13 +896,16 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
                               pw.Text(
                                 booking.toCode,
                                 style: pw.TextStyle(
-                                    fontSize: 26,
-                                    fontWeight: pw.FontWeight.bold),
+                                  fontSize: 26,
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
                               ),
                               pw.Text(
                                 booking.to,
                                 style: const pw.TextStyle(
-                                    fontSize: 9, color: PdfColors.grey),
+                                  fontSize: 9,
+                                  color: PdfColors.grey,
+                                ),
                               ),
                             ],
                           ),
@@ -903,7 +916,9 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
                     // Details
                     pw.Padding(
                       padding: const pw.EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
                       child: pw.Column(
                         children: [
                           _pdfRow('Passenger', passenger.name),
@@ -912,19 +927,18 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
                             'Departure',
                             booking.departureAt.length >= 16
                                 ? booking.departureAt
-                                    .substring(0, 16)
-                                    .replaceAll('T', '  ')
+                                      .substring(0, 16)
+                                      .replaceAll('T', '  ')
                                 : booking.departureAt,
                           ),
                           pw.SizedBox(height: 6),
                           pw.Row(
                             children: [
+                              pw.Expanded(child: _pdfRow('Seat', seatValue)),
                               pw.Expanded(
-                                  child: _pdfRow('Seat', seatValue)),
-                              pw.Expanded(
-                                  child: _pdfRow('Class', booking.seatClass)),
-                              pw.Expanded(
-                                  child: _pdfRow('Gate', booking.gate)),
+                                child: _pdfRow('Class', booking.seatClass),
+                              ),
+                              pw.Expanded(child: _pdfRow('Gate', booking.gate)),
                             ],
                           ),
                         ],
@@ -955,7 +969,9 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
                           pw.Text(
                             'Scan at the gate',
                             style: const pw.TextStyle(
-                                fontSize: 9, color: PdfColors.grey),
+                              fontSize: 9,
+                              color: PdfColors.grey,
+                            ),
                           ),
                         ],
                       ),
@@ -1059,7 +1075,11 @@ class _BoardingPassScreenState extends State<_BoardingPassScreen> {
                       color: Color(0xFF2E7D32),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.check_rounded, color: Colors.white, size: 28),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   const Text(
@@ -1257,7 +1277,10 @@ class _SingleBoardingPass extends StatelessWidget {
                 // Airline header with optional type badge
                 Container(
                   color: passColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -1311,13 +1334,20 @@ class _SingleBoardingPass extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: Row(
                     children: [
-                      _PassColumn(top: booking.fromCode, bottom: booking.from, topLarge: true),
+                      _PassColumn(
+                        top: booking.fromCode,
+                        bottom: booking.from,
+                        topLarge: true,
+                      ),
                       Expanded(
                         child: Column(
                           children: [
                             Icon(Icons.flight, color: passColor, size: 18),
                             const SizedBox(height: 4),
-                            Container(height: 1, color: const Color(0xFFEEEEEE)),
+                            Container(
+                              height: 1,
+                              color: const Color(0xFFEEEEEE),
+                            ),
                           ],
                         ),
                       ),
@@ -1333,7 +1363,10 @@ class _SingleBoardingPass extends StatelessWidget {
 
                 // Times
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -1372,7 +1405,10 @@ class _SingleBoardingPass extends StatelessWidget {
                             ),
                           ),
                           Expanded(
-                            child: _PassRow(label: 'Class', value: booking.seatClass),
+                            child: _PassRow(
+                              label: 'Class',
+                              value: booking.seatClass,
+                            ),
                           ),
                           Expanded(
                             child: _PassRow(label: 'Gate', value: booking.gate),
@@ -1399,7 +1435,10 @@ class _SingleBoardingPass extends StatelessWidget {
                     children: [
                       const Text(
                         'Scan at the gate',
-                        style: TextStyle(fontSize: 11, color: Color(0xFF999999)),
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFF999999),
+                        ),
                       ),
                       const SizedBox(height: 12),
                       _QrWidget(
@@ -1784,14 +1823,14 @@ class _PaymentScreenState extends State<_PaymentScreen> {
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF24A448).withValues(
-                              alpha: 0.2,
-                            ),
+                            color: const Color(
+                              0xFF24A448,
+                            ).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: const Color(0xFF24A448).withValues(
-                                alpha: 0.5,
-                              ),
+                              color: const Color(
+                                0xFF24A448,
+                              ).withValues(alpha: 0.5),
                               width: 1,
                             ),
                           ),
@@ -1984,16 +2023,14 @@ class _PaymentScreenState extends State<_PaymentScreen> {
                     _PayMethodCard(
                       method: _PayMethod.syriatelCash,
                       selected: _method == _PayMethod.syriatelCash,
-                      onTap:
-                          () =>
-                              setState(() => _method = _PayMethod.syriatelCash),
+                      onTap: () =>
+                          setState(() => _method = _PayMethod.syriatelCash),
                     ),
                     const SizedBox(height: 10),
                     _PayMethodCard(
                       method: _PayMethod.paypal,
                       selected: _method == _PayMethod.paypal,
-                      onTap:
-                          () => setState(() => _method = _PayMethod.paypal),
+                      onTap: () => setState(() => _method = _PayMethod.paypal),
                     ),
                     if (_method != null) ...[
                       const SizedBox(height: 24),
@@ -2002,22 +2039,16 @@ class _PaymentScreenState extends State<_PaymentScreen> {
                           phoneCtrl: _phoneCtrl,
                           pinCtrl: _pinCtrl,
                           pinObscured: _pinObscured,
-                          onTogglePin:
-                              () =>
-                                  setState(
-                                    () => _pinObscured = !_pinObscured,
-                                  ),
+                          onTogglePin: () =>
+                              setState(() => _pinObscured = !_pinObscured),
                         )
                       else
                         _PaypalForm(
                           emailCtrl: _emailCtrl,
                           passCtrl: _passCtrl,
                           passObscured: _passObscured,
-                          onTogglePass:
-                              () =>
-                                  setState(
-                                    () => _passObscured = !_passObscured,
-                                  ),
+                          onTogglePass: () =>
+                              setState(() => _passObscured = !_passObscured),
                         ),
                     ],
                     const SizedBox(height: 28),
@@ -2447,13 +2478,15 @@ class _PayMethodCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSyriatel = method == _PayMethod.syriatelCash;
-    final brandColor =
-        isSyriatel ? const Color(0xFFD32F2F) : const Color(0xFF0070BA);
+    final brandColor = isSyriatel
+        ? const Color(0xFFD32F2F)
+        : const Color(0xFF0070BA);
     final gradientColors = isSyriatel
         ? [const Color(0xFFD32F2F), const Color(0xFFB71C1C)]
         : [const Color(0xFF0070BA), const Color(0xFF003087)];
-    final bgColor =
-        isSyriatel ? const Color(0xFFFFF5F5) : const Color(0xFFF0F6FF);
+    final bgColor = isSyriatel
+        ? const Color(0xFFFFF5F5)
+        : const Color(0xFFF0F6FF);
 
     return GestureDetector(
       onTap: onTap,
@@ -2608,7 +2641,9 @@ class _PayMethodCard extends StatelessWidget {
                     : null,
                 color: selected ? null : Colors.transparent,
                 border: Border.all(
-                  color: selected ? Colors.transparent : const Color(0xFFCCCCCC),
+                  color: selected
+                      ? Colors.transparent
+                      : const Color(0xFFCCCCCC),
                   width: 1.5,
                 ),
                 boxShadow: selected
@@ -2622,7 +2657,11 @@ class _PayMethodCard extends StatelessWidget {
                     : [],
               ),
               child: selected
-                  ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+                  ? const Icon(
+                      Icons.check_rounded,
+                      size: 14,
+                      color: Colors.white,
+                    )
                   : null,
             ),
           ],
@@ -2717,7 +2756,8 @@ class _SyriatelForm extends StatelessWidget {
           color: const Color(0xFFD32F2F),
           bg: const Color(0xFFFFF5F5),
           icon: Icons.info_rounded,
-          text: 'Amount will be deducted from your Syriatel Cash wallet balance',
+          text:
+              'Amount will be deducted from your Syriatel Cash wallet balance',
           borderColor: const Color(0xFFFFCDD2),
         ),
       ],
@@ -3264,31 +3304,32 @@ class _PaySuccessScreenState extends State<_PaySuccessScreen>
       parent: _mainCtrl,
       curve: const Interval(0.55, 0.82, curve: Curves.easeOut),
     );
-    _textSlide = Tween<Offset>(
-      begin: const Offset(0, 0.25),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _mainCtrl,
-      curve: const Interval(0.55, 0.82, curve: Curves.easeOut),
-    ));
+    _textSlide = Tween<Offset>(begin: const Offset(0, 0.25), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _mainCtrl,
+            curve: const Interval(0.55, 0.82, curve: Curves.easeOut),
+          ),
+        );
     _cardFade = CurvedAnimation(
       parent: _mainCtrl,
       curve: const Interval(0.70, 0.95, curve: Curves.easeOut),
     );
-    _cardSlide = Tween<Offset>(
-      begin: const Offset(0, 0.35),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _mainCtrl,
-      curve: const Interval(0.70, 0.95, curve: Curves.easeOut),
-    ));
+    _cardSlide = Tween<Offset>(begin: const Offset(0, 0.35), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _mainCtrl,
+            curve: const Interval(0.70, 0.95, curve: Curves.easeOut),
+          ),
+        );
     _btnFade = CurvedAnimation(
       parent: _mainCtrl,
       curve: const Interval(0.85, 1.0, curve: Curves.easeOut),
     );
-    _countAnim = Tween<double>(begin: 0, end: widget.total).animate(
-      CurvedAnimation(parent: _countCtrl, curve: Curves.easeOut),
-    );
+    _countAnim = Tween<double>(
+      begin: 0,
+      end: widget.total,
+    ).animate(CurvedAnimation(parent: _countCtrl, curve: Curves.easeOut));
 
     _mainCtrl.forward().then((_) => _countCtrl.forward());
   }
@@ -3303,8 +3344,9 @@ class _PaySuccessScreenState extends State<_PaySuccessScreen>
 
   @override
   Widget build(BuildContext context) {
-    final methodName =
-        widget.method == _PayMethod.syriatelCash ? 'Syriatel Cash' : 'PayPal';
+    final methodName = widget.method == _PayMethod.syriatelCash
+        ? 'Syriatel Cash'
+        : 'PayPal';
     final now = DateTime.now();
     final dateStr =
         '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}';
@@ -3336,9 +3378,9 @@ class _PaySuccessScreenState extends State<_PaySuccessScreen>
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  const Color(0xFF24A448).withValues(
-                                    alpha: 0.22,
-                                  ),
+                                  const Color(
+                                    0xFF24A448,
+                                  ).withValues(alpha: 0.22),
                                   Colors.transparent,
                                 ],
                               ),
@@ -3526,7 +3568,10 @@ class _PaySuccessScreenState extends State<_PaySuccessScreen>
                     children: [
                       _TxnRow(label: 'Transaction ID', value: _txnId),
                       const _TxnDivider(),
-                      _TxnRow(label: 'Date & Time', value: '$dateStr  $timeStr'),
+                      _TxnRow(
+                        label: 'Date & Time',
+                        value: '$dateStr  $timeStr',
+                      ),
                       const _TxnDivider(),
                       _TxnRow(label: 'Method', value: methodName),
                       const _TxnDivider(),
@@ -3547,14 +3592,14 @@ class _PaySuccessScreenState extends State<_PaySuccessScreen>
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF24A448).withValues(
-                                alpha: 0.15,
-                              ),
+                              color: const Color(
+                                0xFF24A448,
+                              ).withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: const Color(0xFF24A448).withValues(
-                                  alpha: 0.4,
-                                ),
+                                color: const Color(
+                                  0xFF24A448,
+                                ).withValues(alpha: 0.4),
                                 width: 1,
                               ),
                             ),
@@ -3610,7 +3655,9 @@ class _PaySuccessScreenState extends State<_PaySuccessScreen>
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF24A448).withValues(alpha: 0.45),
+                          color: const Color(
+                            0xFF24A448,
+                          ).withValues(alpha: 0.45),
                           blurRadius: 22,
                           offset: const Offset(0, 7),
                           spreadRadius: -3,

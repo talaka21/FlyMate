@@ -10,11 +10,9 @@ class BookingRemoteDataSource {
   // Token key must match what AuthLocalDataSource uses
   static const _tokenKey = 'auth_token';
 
-  BookingRemoteDataSource({
-    Dio? dio,
-    FlutterSecureStorage? storage,
-  })  : _dio = dio ?? DioClient.dio,
-        _storage = storage ?? const FlutterSecureStorage();
+  BookingRemoteDataSource({Dio? dio, FlutterSecureStorage? storage})
+    : _dio = dio ?? DioClient.dio,
+      _storage = storage ?? const FlutterSecureStorage();
 
   Future<BookingResponse> createBooking(BookingRequest request) async {
     final token = await _storage.read(key: _tokenKey);
