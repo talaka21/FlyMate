@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PassengerController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\LostBaggageController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
@@ -92,3 +93,18 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 // تأكدي أن هذا السطر مكتوب في أسفل الملف وخارج مجمّع الحماية
 Route::get('/test-fcm/{user_id}', [App\Http\Controllers\NotificationController::class, 'testFCM']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // مسارات الحقائب المفقودة الخاصة بالمسافر
+    Route::post('/lost-baggage/reports', [LostBaggageController::class, 'store']);
+    Route::get('/lost-baggage/reports', [LostBaggageController::class, 'index']);
+    Route::get('/lost-baggage/reports/{id}', [LostBaggageController::class, 'show']);
+
+    // مسار رفع الصور التابعة للبلاغ
+    Route::post('/lost-baggage/reports/{id}/images', [LostBaggageController::class, 'uploadImage']);
+
+    // مسار الموظف لتحديث الحالة (PATCH)
+    Route::patch('/admin/lost-baggage/reports/{id}/status', [LostBaggageController::class, 'updateStatus']);
+});
