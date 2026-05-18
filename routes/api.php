@@ -33,6 +33,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me',      [AuthController::class, 'me']);
 
+    // تحديث FCM Token (متاح لكل أنواع المستخدمين بمجرد تسجيل الدخول)
+    Route::post('/update-fcm-token', function (\Illuminate\Http\Request $request) {
+        $request->validate([
+            'fcm_token' => 'required|string',
+        ]);
+
+        $request->user()->update([
+            'fcm_token' => $request->fcm_token
+        ]);
+
+        return response()->json(['message' => 'FCM Token updated successfully']);
+    });
+
     // ─── Admin ───
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/managers/pending',       [AdminController::class, 'pendingManagers']);
@@ -76,4 +89,3 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/chat', [ChatController::class, 'send']);
     });
 });
-
