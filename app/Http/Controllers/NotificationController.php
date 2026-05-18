@@ -47,7 +47,7 @@ class NotificationController extends Controller
         Notification::create([
             'user_id' => $user->id,
             'title'   => $title,
-            'body'    => $body,
+            'message' => $body,
             'is_read' => false
         ]);
 
@@ -66,7 +66,6 @@ class NotificationController extends Controller
 
                 $messaging->send($message);
                 return true;
-
             } catch (\Exception $e) {
                 // تسجيل الخطأ بالـ Log في حال كان الـ token منتهي الصلاحية أو هناك مشكلة بالاتصال
                 logger('FCM Error for User ' . $userId . ': ' . $e->getMessage());
@@ -74,5 +73,35 @@ class NotificationController extends Controller
         }
 
         return false;
+    }
+    // أضيفي هذه الدالة هنا ليقرأها الـ Route الخاص بالتيست
+   public function testFCM($userId)
+    {
+        try {
+            $user = User::find($userId);
+
+            if (!$user) {
+                return response()->json(['status' => 'error', 'message' => 'المستخدم غير موجود'], 404);
+            }
+
+            if (!$user->fcm_token) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'هذا المستخدم لا يملك FCM Token حالياً، يجب تحديثه من الفلاتر أولاً!'
+                ], 400);
+            }
+
+            // استدعاء دالة الإرسال والبث الحقيقي
+            $result = $this->sendPushNotification($user->id, 'تنبيه من FlyMate', 'تم تحديث حالة رحلتك بنجاح!');
+
+            if ($result) {
+                return response()->json(['status' => 'success', 'message' => 'تم بث الإشعار وحفظه بالـ History!']);
+            }
+
+            return response()->json(['status' => 'error', 'message' => 'فشل إرسال الإشعار لسيرفر جوجل'], 500);
+
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'error_message' => $e->getMessage()], 500);
+        }
     }
 }

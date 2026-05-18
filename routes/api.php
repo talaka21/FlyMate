@@ -88,4 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Chat
         Route::post('/chat', [ChatController::class, 'send']);
     });
+
 });
+// تأكدي أن هذا السطر مكتوب في أسفل الملف وخارج مجمّع الحماية
+Route::get('/test-fcm/{user_id}', [App\Http\Controllers\NotificationController::class, 'testFCM']);
