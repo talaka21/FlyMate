@@ -8,7 +8,6 @@ class UpdateBaggageStatusRequest extends FormRequest
 {
     public function authorize()
     {
-        // هنا يمكن التحقق لاحقاً إذا كان المستخدم موظفاً (Admin/Staff)
         return true;
     }
 

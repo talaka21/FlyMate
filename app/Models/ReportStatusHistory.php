@@ -9,7 +9,6 @@ class ReportStatusHistory extends Model
 {
     use HasFactory;
 
-    // تحديد اسم الجدول يدوياً لأن لارافيل قد يجمعه بصيغة مختلفة
     protected $table = 'report_status_history';
 
     protected $fillable = [
@@ -19,13 +18,11 @@ class ReportStatusHistory extends Model
         'comment'
     ];
 
-    // التحديث ينتمي لبلاغ معين
     public function report()
     {
         return $this->belongsTo(LostBaggageReport::class, 'lost_baggage_report_id');
     }
 
-    // التحديث تم بواسطة مستخدم/موظف معين
     public function user()
     {
         return $this->belongsTo(User::class, 'changed_by');
