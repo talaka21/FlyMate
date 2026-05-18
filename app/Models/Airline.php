@@ -6,33 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Airline extends Model
 {
-   protected $fillable = [
-        'name',
-        'code',
-        'logo',
-        'hub_city',
-        'tagline',
-        'baggage_kg',
-        'rating',
-        'destinations_count',
-        'has_wifi',
-        'has_lounge',
-        'has_meals',
-        'has_entertainment',
-        'contact_info',
-        'is_active',
-    ];
+protected $fillable = [
+    'name', 'code', 'hub_city', 'tagline', 'baggage_kg',
+    'rating', 'destinations_count', 'facilities', 'contact_info', 'is_active'
+];
 
-    protected $casts = [
-        'is_active'       => 'boolean',
-        'has_wifi'        => 'boolean',
-        'has_lounge'      => 'boolean',
-        'has_meals'       => 'boolean',
-        'has_entertainment' => 'boolean',
-        'rating'          => 'float',
-        'baggage_kg'      => 'integer',
-    ];
+protected $casts = [
+    'facilities' => 'array', // ليتم قراءتها كمصفوفة فوراً
+];
 
+ 
     public function flights()
     {
         return $this->hasMany(Flight::class);

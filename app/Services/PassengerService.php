@@ -63,16 +63,16 @@ class PassengerService
 
         // 2. فلترة المصدر (فقط إذا تم إرسال origin في الطلب)
         ->when(isset($data['origin']), function ($q) use ($data) {
-            $q->whereHas('originAirport', fn($sub) => $sub->where('city', $data['origin']));
+            $q->whereHas('originAirport', fn($sub) => $sub->where('iata_code', $data['origin']));
         })
 
         // 3. فلترة الوجهة (فقط إذا تم إرسال destination في الطلب)
         ->when(isset($data['destination']), function ($q) use ($data) {
-            $q->whereHas('destinationAirport', fn($sub) => $sub->where('city', $data['destination']));
+            $q->whereHas('destinationAirport', fn($sub) => $sub->where('iata_code', $data['destination']));
         })
 
         // 4. حماية إضافية: التأكد أن الرحلة ضمن المدن المسموحة (اختياري حسب منطق عملك)
-        ->whereHas('originAirport', fn($q) => $q->whereIn('city', $allowedCities))
+        ->whereHas('originAirport', fn($q) => $q->whereIn('iata_code', $allowedCities))
 
         ->whereIn('status', ['on_time', 'delayed']);
 
