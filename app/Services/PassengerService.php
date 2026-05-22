@@ -55,36 +55,34 @@ class PassengerService
      */
  public function searchFlights(array $data)
 {
-    $allowedCities = ['Damascus', 'Latakia', 'Deir ez-Zor', 'Aleppo'];
+    // لضمان قراءة التاريخ حتى لو تم إرساله بداخل الـ Body كـ JSON أو بالـ URL
+    $searchDate = $data['date'] ?? request()->input('date') ?? request()->json('date');
 
-    $query = Flight::with(['airline', 'originAirport', 'destinationAirport', 'prices', 'seats'])
-        // 1. الفلترة بالتاريخ (أساسية بناءً على طلب شريكك)
-        ->whereDate('departure_at', $data['date'])
+    if (!$searchDate) {
+        return response()->json([
+            'status' => 'Error',
+            'message' => 'The date field is required.',
+            'data' => null
+        ], 422);
+    }
 
-        // 2. فلترة المصدر (فقط إذا تم إرسال origin في الطلب)
-        ->when(isset($data['origin']), function ($q) use ($data) {
-            $q->whereHas('originAirport', fn($sub) => $sub->where('iata_code', $data['origin']));
-        })
-
-        // 3. فلترة الوجهة (فقط إذا تم إرسال destination في الطلب)
-        ->when(isset($data['destination']), function ($q) use ($data) {
-            $q->whereHas('destinationAirport', fn($sub) => $sub->where('iata_code', $data['destination']));
-        })
-
-        // 4. حماية إضافية: التأكد أن الرحلة ضمن المدن المسموحة (اختياري حسب منطق عملك)
-        ->whereHas('originAirport', fn($q) => $q->whereIn('iata_code', $allowedCities))
-
+    $query = Flight::with(['airline', 'originAirport', 'destinationAirport'])
+        // الفلترة بالتاريخ المأخوذ بشكل ديناميكي
+        ->whereDate('departure_at', $searchDate)
         ->whereIn('status', ['on_time', 'delayed']);
 
     $flights = $query->get();
 
     if ($flights->isEmpty()) {
-        throw new \Exception(__('flights.not_found'));
+        return response()->json([
+            'status' => 'Error',
+            'message' => 'No flights found for date: ' . $searchDate,
+            'data' => []
+        ], 200);
     }
 
     return FlightResource::collection($flights);
 }
-
     public function generateBoardingData($bookingId)
 {
     // جلب الحجز مع بيانات الرحلة والمقعد والمطار

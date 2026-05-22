@@ -21,6 +21,11 @@ return new class extends Migration
             $table->dateTime('arrival_at');
             $table->string('aircraft_type')->nullable();
             $table->integer('total_seats');
+            $table->integer('available_seats');
+            $table->integer('available_seats_first');
+            $table->integer('available_seats_business');
+            $table->integer('available_seats_economy');
+            $table->decimal('mock_price', 8, 2);
             $table->string('frequency')->default('daily');
             $table->enum('status', ['on_time', 'delayed', 'cancelled'])->default('on_time');
             $table->timestamps();

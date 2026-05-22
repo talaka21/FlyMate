@@ -10,60 +10,63 @@ class FlightSeeder extends Seeder
 {
     public function run(): void
     {
-        // المطارات المسموح بالإقلاع منها
-        $allowedOrigins = ['Damascus', 'Latakia', 'Deir ez-Zor', 'Aleppo'];
-
-        // جيب IDs المطارات المحددة فقط للإقلاع
-        $originAirports = DB::table('airports')
-            ->whereIn('city', $allowedOrigins)
-            ->pluck('id', 'city');
-
-        // جيب باقي المطارات كوجهات
-        $allAirports = DB::table('airports')->pluck('id')->toArray();
-
+        $airports = DB::table('airports')->get();
         $airlines = DB::table('airlines')->pluck('id')->toArray();
 
-        if ($originAirports->isEmpty() || empty($airlines)) {
-            $this->command->warn('لا يوجد مطارات أو شركات طيران، شغّل AirportSeeder و AirlineSeeder أولاً');
+        if ($airports->isEmpty() || empty($airlines)) {
+            $this->command->warn('Database tables for airports or airlines are empty!');
             return;
         }
 
-        // توليد رحلات لـ 7 أيام قادمة (تاريخ اليوم + أسبوع لقدام)
         $startDate = Carbon::today();
         $days = 7;
 
-        foreach ($originAirports as $city => $originId) {
-            foreach ($allAirports as $destinationId) {
-                // تجنب الرحلة من وإلى نفس المطار
-                if ($originId === $destinationId) continue;
+        foreach ($airports as $origin) {
+            foreach ($airports as $destination) {
+                if ($origin->id === $destination->id) continue;
 
                 for ($day = 0; $day < $days; $day++) {
                     $departureDate = $startDate->copy()->addDays($day);
 
-                    // تحديد وقت الإقلاع بشكل منطقي (بين الـ 6 صباحاً والـ 8 مساءً)
                     $departureAt = $departureDate->copy()->setHour(rand(6, 20))->setMinute(rand(0, 5) * 12);
-
-                    // مدة الرحلة منطقية (بين ساعة إلى 4 ساعات كحد أقصى)
                     $arrivalAt = $departureAt->copy()->addHours(rand(1, 4));
 
+                    $totalSeats = 150;
+                    $availableSeats = rand(40, $totalSeats);
+
+                    // تقسيم المقاعد عشوائياً على الدرجات
+                    $first = rand(2, 10);
+                    $business = rand(5, 20);
+                    $economy = $availableSeats - ($first + $business);
+
+                    $originCode = $origin->iata_code ?? substr($origin->name, 0, 3);
+
                     DB::table('flights')->insert([
-                        'flight_number'          => strtoupper(substr($city, 0, 2)) . '-' . $destinationId . '-' . $departureDate->format('Ymd') . '-' . rand(100, 999),
-                        'airline_id'             => $airlines[array_rand($airlines)],
-                        'origin_airport_id'      => $originId,
-                        'destination_airport_id' => $destinationId,
-                        'departure_at'           => $departureAt,
-                        'arrival_at'             => $arrivalAt,
-                        'aircraft_type'          => 'Boeing 737',
-                        'total_seats'            => 150,
-                        'frequency'              => 'daily',
-                        'status'                 => 'on_time',
-                        'created_at'             => now(),
-                        'updated_at'             => now(),
+                        'flight_number'            => strtoupper($originCode) . '-' . $destination->id . '-' . $departureDate->format('Ymd') . '-' . rand(100, 999),
+                        'airline_id'               => $airlines[array_rand($airlines)],
+                        'origin_airport_id'        => $origin->id,
+                        'destination_airport_id'   => $destination->id,
+                        'departure_at'             => $departureAt,
+                        'arrival_at'               => $arrivalAt,
+                        'aircraft_type'            => 'Boeing 737',
+                        'total_seats'              => $totalSeats,
+                        'available_seats'          => $availableSeats,
+
+                        // تمرير القيم العشوائية للأعمدة الجديدة
+                        'available_seats_first'    => $first,
+                        'available_seats_business' => $business,
+                        'available_seats_economy'  => $economy,
+                        'mock_price'               => rand(150, 650),
+
+                        'frequency'                => 'daily',
+                        'status'                   => 'on_time',
+                        'created_at'               => now(),
+                        'updated_at'               => now(),
                     ]);
                 }
             }
         }
 
-        $this->command->info('تم توليد الرحلات بنجاح لأسبوع قادم.');
+        $this->command->info('Flights generated successfully with custom seats and prices.');
     }
 }

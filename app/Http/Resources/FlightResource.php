@@ -7,49 +7,32 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class FlightResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray(Request $request): array
     {
-     return [
-            // Basic
-            'id'                      => $this->id,
-            'flight_number'           => $this->flight_number,
-            'aircraftType'            => $this->aircraft_type,
-            'totalSeat'               => $this->total_seats,
-            'status'                  => $this->status,
+        return [
+            'id'                     => $this->id,
+            'flight_number'          => $this->flight_number,
+            'aircraftType'           => $this->aircraft_type,
+            'totalSeat'              => $table->total_seats ?? $this->total_seats,
+            'status'                 => $this->status,
+            'airlineId'              => $this->airline_id,
+            'airlineName'            => $this->airline->name ?? $this->airline_name, // حسب ربط الموديل عندك
+            'airlineCode'            => $this->airline->code ?? $this->airline_code,
+            'originAirportId'        => $this->origin_airport_id,
+            'destinationAirportId'   => $this->destination_airport_id,
+            'origin'                 => $this->originAirport->iata_code ?? $this->origin, // أو الاختصار مباشرة
+            'destination'            => $this->destinationAirport->iata_code ?? $this->destination,
+            'departureAt'            => $this->departure_at,
+            'arrivalAt'              => $this->arrival_at,
 
-            // Airline
-            'airlineId'               => $this->airline->id ?? null,
-            'airlineName'             => $this->airline->name ?? null,
-            'airlineCode'             => $this->airline->code ?? null,
+            'availableSeatsFirst'    => (int) $this->available_seats_first,
+            'availableSeatsBusiness' => (int) $this->available_seats_business,
+            'availableSeatsEconomy'  => (int) $this->available_seats_economy,
+            'mockPrice'              => (float) $this->mock_price,
 
-            // Airports
-            'originAirportId'         => $this->originAirport->id ?? null,
-            'destinationAirportId'    => $this->destinationAirport->id ?? null,
-            'origin'                  => $this->originAirport->iata_code ?? null,
-            'destination'             => $this->destinationAirport->iata_code ?? null,
-
-            // Times
-            'departureAt'             => $this->departure_at,
-            'arrivalAt'               => $this->arrival_at,
-
-            // Available Seats
-            'availableSeatsFirst'     => $this->seats->where('class', 'first_class')->where('is_available', true)->count(),
-            'availableSeatsBusiness' => $this->seats->where('class', 'business')->where('is_available', true)->count(),
-            'availableSeatsEconomy'   => $this->seats->where('class', 'economy')->where('is_available', true)->count(),
-
-            // Price
-            'mockPrice'               => $this->prices->where('class', 'economy')->first()->base_price ?? 0,
-
-            // All Prices
-            'prices'                  => $this->prices->map(fn($p) => [
-                'class'      => $p->class,
-                'base_price' => $p->base_price,
-            ]),
+            'prices'                 => [
+                (float) $this->mock_price
+            ]
         ];
     }
 }
