@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\FlightPrice;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class FlightPriceSeeder extends Seeder
 {
@@ -13,25 +12,58 @@ class FlightPriceSeeder extends Seeder
      */
     public function run(): void
     {
-         $prices = [
-            // Flight 1 - RJ101
-            ['flight_id' => 1, 'class' => 'economy',     'base_price' => 150, 'min_price' => 120, 'max_price' => 200],
-            ['flight_id' => 1, 'class' => 'business',    'base_price' => 350, 'min_price' => 300, 'max_price' => 450],
-            ['flight_id' => 1, 'class' => 'first_class', 'base_price' => 600, 'min_price' => 500, 'max_price' => 800],
+        // جلب جميع الـ IDs للرحلات الموجودة في قاعدة البيانات
+        $flightIds = DB::table('flights')->pluck('id');
 
-            // Flight 2 - EK202
-            ['flight_id' => 2, 'class' => 'economy',     'base_price' => 200, 'min_price' => 180, 'max_price' => 280],
-            ['flight_id' => 2, 'class' => 'business',    'base_price' => 500, 'min_price' => 450, 'max_price' => 650],
-            ['flight_id' => 2, 'class' => 'first_class', 'base_price' => 900, 'min_price' => 800, 'max_price' => 1200],
-
-            // Flight 3 - QR303
-            ['flight_id' => 3, 'class' => 'economy',     'base_price' => 180, 'min_price' => 150, 'max_price' => 250],
-            ['flight_id' => 3, 'class' => 'business',    'base_price' => 420, 'min_price' => 380, 'max_price' => 550],
-            ['flight_id' => 3, 'class' => 'first_class', 'base_price' => 750, 'min_price' => 650, 'max_price' => 950],
-        ];
-
-        foreach ($prices as $price) {
-            FlightPrice::create($price);
+        if ($flightIds->isEmpty()) {
+            $this->command->warn('لا يوجد رحلات في قاعدة البيانات لتوليد أسعار لها. شغّل FlightSeeder أولاً!');
+            return;
         }
+
+        $pricesData = [];
+
+        foreach ($flightIds as $flightId) {
+
+            // 1. درجة الـ Economy (بحدود الـ 600)
+            $pricesData[] = [
+                'flight_id'   => $flightId,
+                'class'       => 'economy',
+                'base_price'  => rand(580, 620), // السعر الأساسي حول الـ 600
+                'min_price'   => 500,            // الحد الأدنى عند العروض
+                'max_price'   => 750,            // الحد الأقصى في المواسم
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ];
+
+            // 2. درجة الـ Business (ضعف سعر الـ Economy تقريباً - منطقي عالمياً)
+            $pricesData[] = [
+                'flight_id'   => $flightId,
+                'class'       => 'business',
+                'base_price'  => rand(1100, 1300),
+                'min_price'   => 950,
+                'max_price'   => 1600,
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ];
+
+            // 3. الدرجة الأولى First Class (تكون أعلى ومكلفة)
+            $pricesData[] = [
+                'flight_id'   => $flightId,
+                'class'       => 'first_class',
+                'base_price'  => rand(2000, 2400),
+                'min_price'   => 1800,
+                'max_price'   => 3000,
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ];
+        }
+
+        // استخدام الـ Chunk لإدخال البيانات على دفعات لتفادي مشاكل الأداء بسبب حجم البيانات الكبير
+        $chunks = array_chunk($pricesData, 500);
+        foreach ($chunks as $chunk) {
+            DB::table('flight_prices')->insert($chunk);
+        }
+
+        $this->command->info('تم توليد الأسعار المنطقية لجميع الدرجات بنجاح.');
     }
 }
