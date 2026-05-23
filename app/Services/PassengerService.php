@@ -50,51 +50,32 @@ class PassengerService
         return true;
     }
 
-    /**
-     * البحث عن الرحلات بناءً على المعايير
-     */
- public function searchFlights(array $data)
+public function searchFlights(array $data)
 {
-    // لضمان قراءة التاريخ حتى لو تم إرساله بداخل الـ Body كـ JSON أو بالـ URL
-    $searchDate = $data['date'] ?? request()->input('date') ?? request()->json('date');
-
-    if (!$searchDate) {
-        return response()->json([
-            'status' => 'Error',
-            'message' => 'The date field is required.',
-            'data' => null
-        ], 422);
-    }
-
-    $query = Flight::with(['airline', 'originAirport', 'destinationAirport'])
-        // الفلترة بالتاريخ المأخوذ بشكل ديناميكي
-        ->whereDate('departure_at', $searchDate)
+    $query = Flight::with(['airline', 'originAirport', 'destinationAirport', 'prices', 'seats'])
+        ->whereHas('originAirport', function ($q) use ($data) {
+            $q->where('iata_code', $data['origin']);
+        })
+        ->whereHas('destinationAirport', function ($q) use ($data) {
+            $q->where('iata_code', $data['destination']);
+        })
+        ->whereDate('departure_at', $data['departure_date'])
         ->whereIn('status', ['on_time', 'delayed']);
+
+    // فلترة بالـ class إذا أرسلها المستخدم
+    if (!empty($data['class'])) {
+        $query->whereHas('prices', function ($q) use ($data) {
+            $q->where('class', $data['class']);
+        });
+    }
 
     $flights = $query->get();
 
     if ($flights->isEmpty()) {
-        return response()->json([
-            'status' => 'Error',
-            'message' => 'No flights found for date: ' . $searchDate,
-            'data' => []
-        ], 200);
+        return collect([]);
     }
 
     return FlightResource::collection($flights);
 }
-    public function generateBoardingData($bookingId)
-{
-    // جلب الحجز مع بيانات الرحلة والمقعد والمطار
-    $booking = Booking::with(['flight.originAirport', 'flight.destinationAirport', 'seat', 'user'])
-                      ->findOrFail($bookingId);
 
-    // الرابط الذي سيفتحه موظف المطار للتأكد من صحة التذكرة
-    $verificationUrl = "https://flymate.com/verify/" . $booking->boarding_code;
-
-    return [
-        'booking' => $booking,
-        'qr_url'  => $verificationUrl
-    ];
-}
 }
