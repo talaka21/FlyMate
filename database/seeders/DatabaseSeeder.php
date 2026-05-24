@@ -22,13 +22,15 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-         $this->call([
-        AdminSeeder::class,
+  $this->call([
+    AdminSeeder::class,
     AirlineSeeder::class,
-        AirportSeeder::class,
-        BookingTypeSeeder::class,
-        FlightSeeder::class,  
-        BookingSeeder::class,
-    ]);
+    AirportSeeder::class,
+    BookingTypeSeeder::class,
+    FlightSeeder::class,
+    BookingSeeder::class,
+    NotificationSeeder::class,
+    SystemSettingSeeder::class,
+]);
     }
 }

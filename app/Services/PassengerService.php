@@ -49,25 +49,33 @@ class PassengerService
 
         return true;
     }
-
 public function searchFlights(array $data)
 {
     $query = Flight::with(['airline', 'originAirport', 'destinationAirport', 'prices', 'seats'])
-        ->whereHas('originAirport', function ($q) use ($data) {
-            $q->where('iata_code', $data['origin']);
+        // 1. الفلترة بالتاريخ (أساسية طالما طلبها أمير)
+        ->when(!empty($data['departure_date']), function ($q) use ($data) {
+            $q->whereDate('departure_at', $data['departure_date']);
         })
-        ->whereHas('destinationAirport', function ($q) use ($data) {
-            $q->where('iata_code', $data['destination']);
+        // 2. الفلترة بمطار الإقلاع (تشتغل فقط إذا تم إرسالها)
+        ->when(!empty($data['origin']), function ($q) use ($data) {
+            $q->whereHas('originAirport', function ($subQ) use ($data) {
+                $subQ->where('iata_code', $data['origin']);
+            });
         })
-        ->whereDate('departure_at', $data['departure_date'])
+        // 3. الفلترة بمطار الوصول (تشتغل فقط إذا تم إرسالها)
+        ->when(!empty($data['destination']), function ($q) use ($data) {
+            $q->whereHas('destinationAirport', function ($subQ) use ($data) {
+                $subQ->where('iata_code', $data['destination']);
+            });
+        })
+        // 4. الفلترة بالدرجة/الكلاس (تشتغل فقط إذا تم إرسالها)
+        ->when(!empty($data['class']), function ($q) use ($data) {
+            $q->whereHas('prices', function ($subQ) use ($data) {
+                $subQ->where('class', $data['class']);
+            });
+        })
+        // الحالات الثابتة للرحلة المتاحة
         ->whereIn('status', ['on_time', 'delayed']);
-
-    // فلترة بالـ class إذا أرسلها المستخدم
-    if (!empty($data['class'])) {
-        $query->whereHas('prices', function ($q) use ($data) {
-            $q->where('class', $data['class']);
-        });
-    }
 
     $flights = $query->get();
 
