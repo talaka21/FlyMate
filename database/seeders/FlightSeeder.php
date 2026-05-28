@@ -10,49 +10,58 @@ class FlightSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. جلب مطار دمشق الدولي حصراً ليكون المحور (Hub)
-        $damascusAirport = DB::table('airports')->where('iata_code', 'DAM')->first();
+        // 1. تحديد الأكواد الصارمة للمطارات السورية (المطارات الداخلية)
+        $syrianCodes = ['DAM', 'ALP', 'LTK', 'DEZ'];
 
-        // 2. جلب باقي المطارات الدولية (دبي، القاهرة، إسطنبول، بيروت...)
-        $internationalAirports = DB::table('airports')->where('iata_code', '!=', 'DAM')->get();
+        // 2. جلب المطارات السورية فقط (لتكون هي نقطة الانطلاق دائماً)
+        $syrianAirports = DB::table('airports')
+            ->whereIn('iata_code', $syrianCodes)
+            ->get();
 
-        // 3. جلب جميع شركات الطيران المتاحة (سواء قطرية، تركية، أو سورية)
+        // 3. جلب المطارات الدولية الخارجية (لتكون هي وجهة الهبوط دائماً)
+        $internationalAirports = DB::table('airports')
+            ->whereNotIn('iata_code', $syrianCodes)
+            ->get();
+
+        // 4. جلب شركات الطيران المتاحة
         $airlines = DB::table('airlines')->pluck('id')->toArray();
 
-        if (!$damascusAirport || $internationalAirports->isEmpty() || empty($airlines)) {
-            $this->command->warn('Ensure Damascus airport (DAM), international airports, and airlines exist in database!');
+        // فحص أمان للتأكد من وجود البيانات
+        if ($syrianAirports->isEmpty() || $internationalAirports->isEmpty() || empty($airlines)) {
+            $this->command->warn('Warning: Make sure you have both Syrian airports and International airports in your AirportSeeder!');
             return;
         }
 
         $days = 7;
         $classes = ['economy', 'business', 'first_class'];
 
-        // توليد الرحلات: كل رحلة يجب أن تكون إما مغادرة من دمشق أو قادمة إلى دمشق
-        foreach ($internationalAirports as $airport) {
+        // 🔥 الربط الموجه الصارم الجديد: من (مطار داخلي سوري) إلى (مطار خارجي دولي) فقط!
+        foreach ($syrianAirports as $syrianAirport) {
+            foreach ($internationalAirports as $internationalAirport) {
 
-            for ($day = 0; $day < $days; $day++) {
+                for ($day = 0; $day < $days; $day++) {
 
-                // --- (النوع الأول: رحلة مغادرة من دمشق إلى الخارج) ---
-                $this->createFlightPair($damascusAirport, $airport, $airlines, $classes, $day);
+                    // ✅ رحلة مغادرة فقط: من مطار سوري إلى مطار دولي خارج سوريا
+                    $this->createFlightPair($syrianAirport, $internationalAirport, $airlines, $classes, $day);
 
-                // --- (النوع الثاني: رحلة قادمة من الخارج إلى دمشق) ---
-                $this->createFlightPair($airport, $damascusAirport, $airlines, $classes, $day);
+                    // ❌ تم حذف سطر توليد الرحلات القادمة (من برا لجوا) بناءً على طلبكِ
+                }
             }
         }
 
-        $this->command->info('Perfect! All flights are strictly connected to Damascus International Airport.');
+        $this->command->info('Success! Flights can ONLY depart from Syrian internal airports to the outside world.');
     }
 
-    // تابع مساعد لتوليد بيانات الرحلة والأسعار والمقاعد لمنع تكرار الكود
+    // التابع المساعد لتوليد البيانات والأسعار والمقاعد
     private function createFlightPair($origin, $destination, $airlines, $classes, $day): void
     {
         $departureAt = Carbon::now()->addHours(10 + ($day * 24))->setMinute(rand(0, 5) * 12);
-        $arrivalAt = $departureAt->copy()->addHours(rand(2, 5)); // مدة الطيران الدولية من 2 إلى 5 ساعات
+        $arrivalAt = $departureAt->copy()->addHours(rand(2, 5));
         $originCode = $origin->iata_code ?? substr($origin->name, 0, 3);
 
         $flightId = DB::table('flights')->insertGetId([
             'flight_number'          => strtoupper($originCode) . '-' . $destination->id . '-' . $departureAt->format('Ymd') . '-' . rand(100, 999),
-            'airline_id'             => $airlines[array_rand($airlines)], // اختيار شركة طيران عشوائية (قطرية، تركية، سورية...)
+            'airline_id'             => $airlines[array_rand($airlines)],
             'origin_airport_id'      => $origin->id,
             'destination_airport_id' => $destination->id,
             'departure_at'           => $departureAt,
@@ -66,7 +75,6 @@ class FlightSeeder extends Seeder
             'updated_at'             => now(),
         ]);
 
-        // إدخال أسعار عشوائية متناسقة مع الرحلات الدولية
         $priceEconomy  = rand(150, 300);
         $priceBusiness = $priceEconomy + rand(200, 350);
         $priceFirst    = $priceBusiness + rand(400, 600);
@@ -77,7 +85,6 @@ class FlightSeeder extends Seeder
             ['flight_id' => $flightId, 'class' => 'first_class', 'base_price' => $priceFirst, 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        // إنشاء المقاعد
         $seatCounter = 1;
         foreach ($classes as $class) {
             $seatsToCreate = ($class === 'economy') ? 10 : (($class === 'business') ? 4 : 2);

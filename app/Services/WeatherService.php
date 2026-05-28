@@ -12,7 +12,7 @@ class WeatherService
             'q'     => $city,
             'appid' => config('services.openweather.key'),
             'units' => 'metric',
-            'lang'  => 'ar',
+            'lang'  => 'en',
         ]);
 
         $data = $response->json();

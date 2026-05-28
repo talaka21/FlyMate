@@ -4,11 +4,15 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Airline;
+use Illuminate\Support\Facades\DB;
 
 class AirlineSeeder extends Seeder
 {
     public function run(): void
     {
+ DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('airlines')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
         $airlines = [
             [
                 'name'               => 'Qatar Airways',
