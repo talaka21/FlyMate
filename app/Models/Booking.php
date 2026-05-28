@@ -7,25 +7,29 @@ use Illuminate\Support\Str;
 
 class Booking extends Model
 {
-    protected $fillable = [
-        'boarding_code',
-        'user_id',
-        'flight_id',
-        'seat_id',
-        'booking_type_id',
-        'seat_class',
-        'status',
-        'total_price',
-        'adult_count',
-        'child_count',
-        'infant_count'
+ protected $fillable = [
+    'boarding_code',
+    'user_id',
+    'flight_id',
+    'seat_id',
+    'booking_type_id',
+    'seat_class',
+    'status',
+    'total_price',
+    'adult_count',
+    'child_count',
+    'infant_count',
+    'reward_id',
+    'paid_price',
+    'stripe_payment_id',
+    'cancellation_fee',
+    'refund_amount',
     ];
 
     const STATUS_PENDING = 'pending';
     const STATUS_CONFIRMED = 'confirmed';
     const STATUS_CANCELLED = 'cancelled';
 
-    // دالة توليد كود بوردينج تلقائي عند إنشاء الحجز
     protected static function booted()
     {
         static::creating(function ($booking) {
@@ -45,7 +49,6 @@ class Booking extends Model
         return $this->belongsTo(Flight::class);
     }
 
-    // إضافة علاقة المقعد لكي يعمل الـ Resource بدون أخطاء
     public function seat()
     {
         return $this->belongsTo(Seat::class);
@@ -59,5 +62,10 @@ class Booking extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function reward()
+    {
+        return $this->belongsTo(Reward::class);
     }
 }

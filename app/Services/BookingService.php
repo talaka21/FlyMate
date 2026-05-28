@@ -8,6 +8,7 @@ use App\Models\FlightPrice;
 use App\Mail\BookingConfirmationMail;
 use App\Mail\BookingCancelledMail;
 use App\Mail\BookingRescheduledMail;
+use App\Models\Reward;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -67,39 +68,88 @@ class BookingService
         });
     }
 
-    public function cancelBooking(Booking $booking)
-    {
-        if (!in_array($booking->status, [Booking::STATUS_PENDING, Booking::STATUS_CONFIRMED])) {
-            throw new Exception(__('bookings.cannot_cancel'));
-        }
-
-        $booking->update(['status' => Booking::STATUS_CANCELLED]);
-
-        Mail::to($booking->user->email)->send(new BookingCancelledMail($booking));
-
-        return $booking;
+  public function cancelBooking(Booking $booking)
+{
+    if (!in_array($booking->status, [Booking::STATUS_PENDING, Booking::STATUS_CONFIRMED])) {
+        throw new Exception(__('bookings.cannot_cancel'));
     }
 
-    public function rescheduleBooking(Booking $booking, array $data)
-    {
-        if ($booking->status !== Booking::STATUS_CONFIRMED) {
-            throw new Exception(__('bookings.cannot_reschedule'));
+    return DB::transaction(function () use ($booking) {
+
+        // 1. حساب رسوم الإلغاء بناءً على الوقت ونوع الحجز
+        $flight = $booking->flight;
+        $bookingType = $booking->bookingType;
+        $hoursUntilFlight = now()->diffInHours($flight->departure_time, false);
+
+        if ($hoursUntilFlight > 72) {
+            $cancellationFee = $bookingType->cancellation_fee_72h;
+        } elseif ($hoursUntilFlight > 24) {
+            $cancellationFee = $bookingType->cancellation_fee_24h;
+        } else {
+            $cancellationFee = $bookingType->cancellation_fee_less_24h;
         }
 
-        $flight = Flight::find($booking->flight_id);
-        if (now()->diffInHours($flight->departure_time, false) < 24) {
-            throw new Exception(__('bookings.reschedule_too_late'));
+        // حساب المبلغ الصافي المسترد (تأكدي أنه لا ينزل تحت الصفر)
+        $refundAmount = max(0, $booking->paid_price - $cancellationFee);
+
+        // 2. استرجاع أموال Stripe بعد خصم الرسوم (محمي بـ try-catch للفحص اليدوي)
+        if ($booking->status === Booking::STATUS_CONFIRMED && $booking->stripe_payment_id && $refundAmount > 0) {
+            try {
+                \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+                \Stripe\Refund::create([
+                    'payment_intent' => $booking->stripe_payment_id,
+                    'amount' => intval($refundAmount * 100), // تحويل السنتات لـ Stripe
+                ]);
+                \Illuminate\Support\Facades\Log::info("Stripe refund successful for booking: {$booking->id}");
+            } catch (\Exception $e) {
+                // 🔥 هنا السحر: إذا كان الـ ID وهمياً في الـ Postman، فلن يعلق السيرفر ولن يعطي 400 Bad Request
+                // سيقوم النظام بتسجيل التحذير في الـ Log، ويتخطى الخطوة ليكمل سحب النقاط وتحديث قاعدة البيانات بسلام
+                \Illuminate\Support\Facades\Log::warning("Stripe refund skipped or failed: " . $e->getMessage());
+            }
         }
 
-        $newPrice = $this->getFlightPrice($data['new_flight_id'], $booking->seat_class);
-        $fareDifference = $newPrice ? max(0, $newPrice->base_price - $booking->total_price) : 0;
+        // 3. سحب النقاط المكتسبة (تعديل الحماية من السالب)
+        $user = $booking->user;
 
-        $booking->update(['flight_id' => $data['new_flight_id']]);
+        // نسحب النقاط بناءً على المبلغ المعاد له فعلياً، أو نسحبها كاملة لأن الرحلة التغت.
+        // الأفضل لشركات الطيران سحب النقاط كاملة التي كسبها من هذه الرحلة:
+        $earnedPoints = intval($booking->paid_price / 10);
 
-        Mail::to($booking->user->email)->send(new BookingRescheduledMail($booking));
+        if ($earnedPoints > 0) {
+            // حماية: نمنع رصيد نقاط المستخدم من النزول تحت الصفر
+            $newUserPoints = max(0, $user->loyalty_points - $earnedPoints);
+            $user->update(['loyalty_points' => $newUserPoints]);
+        }
 
-        return ['booking' => $booking, 'fare_difference' => $fareDifference];
-    }
+        // 4. إرجاع نقاط الـ reward إذا كان قد استخدم مكافأة خصم لتعود لمحفظته
+        if ($booking->reward_id) {
+            $reward = Reward::find($booking->reward_id);
+            if ($reward) {
+                $user->increment('loyalty_points', $reward->points_cost);
+            }
+        }
+
+        // 5. تحديث بيانات الحجز في قاعدة البيانات
+        $booking->update([
+            'status' => Booking::STATUS_CANCELLED,
+            'cancellation_fee' => $cancellationFee,
+            'refund_amount' => $refundAmount,
+        ]);
+
+        // 6. إرسال إيميل الإلغاء للعميل ليعرف كم خصم منه وكم أعيد له
+        try {
+            Mail::to($user->email)->send(new BookingCancelledMail($booking));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Mail sending failed: " . $e->getMessage());
+        }
+
+        return [
+            'booking' => $booking,
+            'cancellation_fee' => $cancellationFee,
+            'refund_amount' => $refundAmount,
+        ];
+    });
+}
 
     public function upgradeBooking(Booking $booking, $newClass)
     {

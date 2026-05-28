@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\LostBaggageController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\OfferController;
 use App\Http\Controllers\PrayerController;
 use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
@@ -116,3 +117,12 @@ Route::get('/convert-currency', [CurrencyController::class, 'convertCurrency']);
 
 // الـ Route الخاص بمواقيت الصلاة والقبلة
 Route::get('/prayer-times', [PrayerController::class, 'getPrayerTimes']);
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    // رابط إنشاء عملية الدفع والحجز
+    Route::post('/bookings/pay', [BookingController::class, 'createPaymentIntent']);
+});
+
+// هذا الرابط سترايب رح تضربه لما ينجح الدفع
+Route::post('/stripe/webhook', [BookingController::class, 'handleStripeWebhook']);

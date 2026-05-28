@@ -33,6 +33,7 @@ class User extends Authenticatable implements FilamentUser
         'mfa_code',
         'mfa_expires_at',
         'fcm_token',
+        'loyalty_points',
     ];
 
     const ROLE_ADMIN = 'admin';
