@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\LostBaggageController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
@@ -108,3 +109,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // مسار الموظف لتحديث الحالة (PATCH)
     Route::patch('/admin/lost-baggage/reports/{id}/status', [LostBaggageController::class, 'updateStatus']);
 });
+
+//Currency
+Route::get('/convert-currency', [CurrencyController::class, 'convertCurrency']);
