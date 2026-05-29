@@ -126,3 +126,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // هذا الرابط سترايب رح تضربه لما ينجح الدفع
 Route::post('/stripe/webhook', [BookingController::class, 'handleStripeWebhook']);
+
+use App\Http\Controllers\API\RewardController;
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // الأربطة الجديدة لنظام النقاط والمكافآت 🔥
+    Route::get('/rewards', [RewardController::class, 'index']); // متجر المكافآت
+    Route::get('/user/points', [RewardController::class, 'getUserPoints']); // رصيد النقاط الحالي
+
+    // ... باقي أربطة الحجوزات والإلغاء تبعكِ ...
+});
