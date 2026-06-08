@@ -221,10 +221,8 @@ class BookingController extends Controller
         $endpointSecret = env('STRIPE_WEBHOOK_SECRET');
         $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $endpointSecret);
 
-        //  بدالهم حطي هاد السطر لقراءة الـ JSON دغري من البوست مان:
         $event = json_decode($payload);
 
-        // تعديل صغير بقرائة الداتا لأن json_decode بيحولها لـ Object عادي:
         if ($event->type === 'payment_intent.succeeded') {
             $paymentIntent = $event->data->object;
             $bookingId = $paymentIntent->metadata->booking_id ?? null;

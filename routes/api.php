@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PassengerController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\DestinationController;
 use App\Http\Controllers\Api\LostBaggageController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\CurrencyController;
@@ -135,5 +136,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/rewards', [RewardController::class, 'index']); // متجر المكافآت
     Route::get('/user/points', [RewardController::class, 'getUserPoints']); // رصيد النقاط الحالي
 
-    // ... باقي أربطة الحجوزات والإلغاء تبعكِ ...
+
 });
+
+// Public Routes
+Route::get('/destinations',      [DestinationController::class, 'index']);
+Route::get('/destinations/{id}', [DestinationController::class, 'show']);
