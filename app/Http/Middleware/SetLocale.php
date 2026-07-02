@@ -8,16 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SetLocale
 {
-    public function handle(Request $request, Closure $next): Response
+   public function handle(Request $request, Closure $next): Response
     {
-        $locale = $request->header('Accept-Language')
-            ?? session('locale', config('app.locale'));
-
-        // تأكد اللغة مدعومة
-        if (in_array($locale, ['en', 'ar'])) {
-            app()->setLocale($locale);
-        } else {
-            app()->setLocale(config('app.locale'));
+        if (session()->has('locale')) {
+            app()->setLocale(session()->get('locale'));
         }
 
         return $next($request);

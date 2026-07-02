@@ -2,10 +2,7 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\User;
-use App\Models\Booking;
-use App\Models\Flight;
-use App\Models\Payment;
+use App\Filament\Pages\Dashboard;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
@@ -13,44 +10,54 @@ class StatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-             return [
-            Stat::make('Total Passengers', User::where('role', 'passenger')->count())
-                ->description('Registered passengers')
+        $stats = (new Dashboard)->getStats();
+
+        $cancellationRate = $stats['total_flights'] > 0
+            ? round(($stats['cancelled_flights'] / $stats['total_flights']) * 100, 1)
+            : 0;
+
+        return [
+            // ── BOOKING OVERVIEW ──────────────────────────────
+            Stat::make('Total Bookings', $stats['total_bookings'])
+                ->description('All time')
+                ->descriptionIcon('heroicon-m-ticket')
+                ->color('primary'),
+
+            Stat::make('Confirmed', $stats['confirmed'])
+                ->description('Active bookings')
+                ->descriptionIcon('heroicon-m-check-circle')
+                ->color('success'),
+
+            Stat::make('Cancelled', $stats['cancelled'])
+                ->description('Refunded or voided')
+                ->descriptionIcon('heroicon-m-x-circle')
+                ->color('danger'),
+
+            Stat::make('Pending', $stats['pending'])
+                ->description('Awaiting confirmation')
+                ->descriptionIcon('heroicon-m-clock')
+                ->color('warning'),
+
+            // ── FINANCIAL & OPERATIONS ────────────────────────
+            Stat::make('Total Revenue', '$' . number_format($stats['total_revenue'], 2))
+                ->description('USD collected')
+                ->descriptionIcon('heroicon-m-banknotes')
+                ->color('success'),
+
+            Stat::make('Total Passengers', $stats['total_passengers'])
+                ->description('Registered travellers')
                 ->descriptionIcon('heroicon-m-user-group')
                 ->color('primary'),
 
-            Stat::make('Total Flights', Flight::count())
-                ->description('Available flights')
+            Stat::make('Total Flights', $stats['total_flights'])
+                ->description('Scheduled routes')
                 ->descriptionIcon('heroicon-m-paper-airplane')
                 ->color('info'),
 
-            Stat::make('Total Bookings', Booking::count())
-                ->description('All reservations')
-                ->descriptionIcon('heroicon-m-ticket')
-                ->color('success'),
-
-            Stat::make('Flights Today', Flight::whereDate('departure_at', today())->count())
-                ->description('Departures scheduled today')
-                ->descriptionIcon('heroicon-m-paper-airplane')
-                ->color('info'),
-
-            Stat::make('Average Ticket Price', '$' . number_format(Payment::avg('amount'), 2))
-                ->description('Average booking payment')
-                ->descriptionIcon('heroicon-m-currency-dollar')
-                ->color('success'),
-
-            Stat::make('Total Revenue', '$' . number_format(
-                Payment::where('status', 'success')->sum('amount'), 2
-            ))
-                ->description('Total earnings')
-                ->descriptionIcon('heroicon-m-currency-dollar')
-                ->color('warning'),
-
-            Stat::make('Pending Managers', User::where('role', 'manager')->where('status', 'pending')->count())
-                ->description('Managers awaiting approval')
-                ->descriptionIcon('heroicon-m-clock')
+            Stat::make('Cancelled Flights', $stats['cancelled_flights'])
+                ->description($cancellationRate . '% cancellation rate')
+                ->descriptionIcon('heroicon-m-arrow-uturn-left')
                 ->color('danger'),
         ];
-
     }
 }

@@ -46,4 +46,9 @@ class AdminController extends Controller
         $managers = $this->adminService->getPendingManagers();
         return $this->success($managers);
     }
+        public function dashboard()
+    {
+        $stats = $this->adminService->getDashboardStats();
+        return $this->success($stats);
+    }
 }

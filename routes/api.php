@@ -61,9 +61,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ─── Manager + Admin ───
     Route::middleware('role:manager,admin')->group(function () {
-        Route::get('/dashboard', fn() => response()->json(['message' => 'Welcome to Dashboard']));
+        Route::get('/dashboard', [AdminController::class, 'dashboard']);
     });
-
     // ─── Passenger ───
     Route::middleware('role:passenger')->group(function () {
         Route::get('/home', fn() => response()->json(['message' => 'Welcome Passenger']));
@@ -93,7 +92,6 @@ Route::middleware('auth:sanctum')->group(function () {
         // Chat
         Route::post('/chat', [ChatController::class, 'send']);
     });
-
 });
 // تأكدي أن هذا السطر مكتوب في أسفل الملف وخارج مجمّع الحماية
 Route::get('/test-fcm/{user_id}', [App\Http\Controllers\NotificationController::class, 'testFCM']);

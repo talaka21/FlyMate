@@ -3,15 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AuditLogResource\Pages;
-use App\Filament\Resources\AuditLogResource\RelationManagers;
 use App\Models\AuditLog;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AuditLogResource extends Resource
 {
@@ -24,6 +20,7 @@ class AuditLogResource extends Resource
     {
         return auth()->user()->role === 'admin';
     }
+
     public static function form(Form $form): Form
     {
         return $form->schema([]);
@@ -37,34 +34,49 @@ class AuditLogResource extends Resource
                     ->label('User')
                     ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('action')
                     ->badge()
+                    ->searchable()
                     ->color(fn(string $state): string => match ($state) {
-                        'created' => 'success',
-                        'updated' => 'warning',
-                        'deleted' => 'danger',
-                        default   => 'gray',
+                        'Login'                => 'info',    // أزرق سماوي
+                        'Create Flight'        => 'success', // أخضر
+                        'Update Flight'        => 'warning', // برتقالي
+                        'Update Status Toggle' => 'primary', // لون متناسق مع ثيم النظام
+                        'Cancel Booking'       => 'danger',  // أحمر
+                        default                => 'gray',    // رمادي
                     }),
+
                 Tables\Columns\TextColumn::make('model')
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('model_id')
                     ->label('Record ID'),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->label('Time'),
             ])
             ->defaultSort('created_at', 'desc')
+
             ->filters([
                 Tables\Filters\SelectFilter::make('action')
                     ->options([
-                        'created' => 'Created',
-                        'updated' => 'Updated',
-                        'deleted' => 'Deleted',
+                        'Login'                => 'Login',
+                        'Create Flight'        => 'Create Flight',
+                        'Update Flight'        => 'Update Flight',
+                        'Update Status Toggle' => 'Update Status Toggle',
+                        'Cancel Booking'       => 'Cancel Booking',
                     ]),
             ])
+
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->label('View')
+                    ->icon('heroicon-m-eye')
+                    ->color('primary') // تم تعديله إلى primary ليطابق درجة أزرق القائمة الجانبية تماماً
+                    ->link(),
             ]);
     }
 
@@ -75,15 +87,16 @@ class AuditLogResource extends Resource
         ];
     }
 
-    // منع الإضافة والتعديل والحذف
     public static function canCreate(): bool
     {
         return false;
     }
+
     public static function canEdit($record): bool
     {
         return false;
     }
+
     public static function canDelete($record): bool
     {
         return false;

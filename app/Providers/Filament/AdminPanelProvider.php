@@ -36,39 +36,47 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => Color::Orange,
             ])
             ->brandName('✈ FlyMate')
-  ->renderHook(
-    \Filament\View\PanelsRenderHook::USER_MENU_BEFORE,
-    fn () => new \Illuminate\Support\HtmlString('
+
+            /* 🌐 زر تبديل اللغة السريع والتلقائي بتصميم الكبسولة الجديد */
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::USER_MENU_BEFORE,
+                fn() => new \Illuminate\Support\HtmlString('
         <a href="/admin/lang?locale=' . (app()->getLocale() === "en" ? "ar" : "en") . '"
-           style="padding: 6px 12px; background: #0ea5e9; color: white;
-                  border-radius: 8px; text-decoration: none; font-size: 13px; margin: 0 8px;">
-            🌐 ' . (app()->getLocale() === "en" ? "العربية" : "English") . '
+           onmouseover="this.style.background=\'linear-gradient(135deg, #3b82f6, #2563eb)\'; this.style.color=\'white\'; this.style.borderColor=\'#2563eb\'; this.style.boxShadow=\'0 4px 12px rgba(59, 130, 246, 0.3)\';"
+           onmouseout="this.style.background=\'linear-gradient(135deg, #f3f4f6, #e5e7eb)\'; this.style.color=\'#374151\'; this.style.borderColor=\'#d1d5db\'; this.style.boxShadow=\'0 1px 3px rgba(0, 0, 0, 0.05)\';"
+           style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 14px;
+                  background: linear-gradient(135deg, #f3f4f6, #e5e7eb); color: #374151;
+                  border: 1px solid #d1d5db; border-radius: 20px; text-decoration: none;
+                  font-size: 12px; font-weight: 700; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+                  transition: all 0.2s ease-in-out; margin: 0 8px; cursor: pointer;">
+            🌐 ' . (app()->getLocale() === "en" ? "English" : "العربية") . '
         </a>
     '),
-)
+            )
+
             ->favicon(asset('favicon.ico'))
             ->darkMode(true)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                 \App\Filament\Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                \App\Filament\Widgets\StatsOverview::class,
+                \App\Filament\Widgets\FlightsToday::class,
             ])
-
             ->middleware([
-                EncryptCookies::class,
-                AddQueuedCookiesToResponse::class,
-                StartSession::class,
-                AuthenticateSession::class,
-                ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
-                SubstituteBindings::class,
-                DisableBladeIconComponents::class,
-                DispatchServingFilamentEvent::class,
+                \Illuminate\Cookie\Middleware\EncryptCookies::class,
+                \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+                \Illuminate\Session\Middleware\StartSession::class, // 1. الجلسة تفتح هنا
+                \App\Http\Middleware\SetLocale::class,              // 2. 👈 انقليه إلى هنا ليقرأ اللغة من الجلسة بنجاح!
+                \Filament\Http\Middleware\AuthenticateSession::class,
+                \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+                \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+                \Illuminate\Routing\Middleware\SubstituteBindings::class,
+                \Filament\Http\Middleware\DisableBladeIconComponents::class,
+                \Filament\Http\Middleware\DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

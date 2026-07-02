@@ -36,10 +36,21 @@ class Reports extends Page implements HasForms
     {
         return $form->schema([
             Section::make('Filter by Date')->schema([
-                DatePicker::make('date_from')->label('From'),
-                DatePicker::make('date_to')->label('To'),
+                DatePicker::make('date_from')
+                    ->label('From')
+                    ->live(),
+                DatePicker::make('date_to')
+                    ->label('To')
+                    ->live(),
             ])->columns(2),
         ]);
+    }
+
+    protected function getViewData(): array
+    {
+        return [
+            'stats' => $this->getStats(),
+        ];
     }
 
     public function getStats(): array
@@ -57,8 +68,8 @@ class Reports extends Page implements HasForms
         }
 
         return [
-            'total_bookings'    => $query->count(),
-            'confirmed'         => $query->where('status', 'confirmed')->count(),
+            'total_bookings'    => (clone $query)->count(),
+            'confirmed'         => (clone $query)->where('status', 'confirmed')->count(),
             'cancelled'         => (clone $query)->where('status', 'cancelled')->count(),
             'pending'           => (clone $query)->where('status', 'pending')->count(),
             'total_revenue'     => $paymentQuery->where('status', 'success')->sum('amount'),
@@ -68,10 +79,11 @@ class Reports extends Page implements HasForms
         ];
     }
 
-  public function exportExcel()
-{
-    return (new \App\Exports\BookingsExport)->download();
-}
+    public function exportExcel()
+    {
+        return (new \App\Exports\BookingsExport)->download();
+    }
+
     public function exportPdf()
     {
         $stats = $this->getStats();

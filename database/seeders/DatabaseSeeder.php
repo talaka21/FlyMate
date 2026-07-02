@@ -28,9 +28,13 @@ class DatabaseSeeder extends Seeder
     AirportSeeder::class,
     BookingTypeSeeder::class,
     FlightSeeder::class,
+    FlightPriceSeeder::class,
+    SeatSeeder::class,
     BookingSeeder::class,
+    ScheduleSeeder::class,
     NotificationSeeder::class,
     SystemSettingSeeder::class,
+    LostBaggageReportSeeder::class,
 ]);
     }
 }
